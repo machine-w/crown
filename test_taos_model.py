@@ -35,6 +35,8 @@ class Meter1(Model):
             # order_by= ['-ts']
             database = db
             db_table = 'meter1'
+class Meter(Model):
+        cur = FloatField(db_column='c1')
 
 def test_raw_sql():
     res = db.raw_sql('CREATE DATABASE IF NOT EXISTS "test_raw" KEEP 50 COMP 1 REPLICA 1 BLOCKS 100 QUORUM 2')

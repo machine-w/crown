@@ -162,9 +162,9 @@ class Database(object):
         qc = self.get_compiler()
         return [[0]] == self.execute_sql(qc.create_table(model_class,safe=safe))
 
-    def drop_table(self, model_class, fail_silently=False):
+    def drop_table(self, model_class, safe=False):
         qc = self.get_compiler()
-        return [[0]] == self.execute_sql(qc.drop_table(model_class, fail_silently))
+        return [[0]] == self.execute_sql(qc.drop_table(model_class, safe))
 
     def raw_sql(self, sql, *params):
         return self.execute_sql(sql.replace("?", "{}"),params)
