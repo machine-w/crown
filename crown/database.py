@@ -1,7 +1,7 @@
 import threading
 from .common import *
 from .query import *
-from .engines.taosrestful import taos_resetful
+from .eng_taosrestful import taos_resetful
 class Database(object):
     commit_select = False
     compiler_class = QueryCompiler
