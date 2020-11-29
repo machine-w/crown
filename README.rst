@@ -103,6 +103,7 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的小型ORM库�
 超级表定义：
 
 .. code-block:: python
+
     # 超级表模型类继承自SuperModel类
     class Meters(SuperModel):
         cur = FloatField(db_column='c1')
