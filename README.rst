@@ -1,7 +1,7 @@
 crown
 ======
 
-crown 是一个轻量级的针对时序数据（TSDB）TDengine的小型ORM库。 
+crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。 
 
 * 需要python 3.0版本以上
 * 在tdengine 2.0.8版本测试通过
