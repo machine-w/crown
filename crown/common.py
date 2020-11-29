@@ -27,7 +27,7 @@ OP_ILIKE = 29
 # JOIN_LEFT_OUTER = 2
 # JOIN_FULL = 3
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('crown')
 
 

@@ -1,9 +1,10 @@
 import logging
 import requests
 from datetime import datetime
+from .common import logger
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger('crown')
+# logging.basicConfig(level=logging.DEBUG)
+# logger = logging.getLogger('crown')
 
 PATH='rest/sql'
 
