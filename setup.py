@@ -4,7 +4,7 @@ from os import path
 DIR = path.dirname(path.abspath(__file__))
 # INSTALL_PACKAGES = open(path.join(DIR, 'requirements.txt')).read().splitlines()
 
-with open(path.join(DIR, 'README_EN.rst')) as f:
+with open(path.join(DIR, 'README.rst'),encoding='utf-8') as f:
     README = f.read()
 
 setup(
@@ -16,7 +16,7 @@ setup(
     install_requires=[
         'requests>=2.23.0'
     ],
-    version='0.0.2',
+    version='0.0.1',
     url='https://github.com/machine-w/crown',
     author='machine-w',
     author_email='steve2008.ma@gmail.com',
