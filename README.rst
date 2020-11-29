@@ -6,6 +6,7 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的小型ORM库�
 * 需要python 3.0版本以上
 * 在tdengine 2.0.8版本测试通过
 * 旨在解决mac操作系统下目前没有原生python连接器的问题，也为更加方便的使用tdengine数据库。
+* 目前使用TDengine的restful接口连接数据库，以后将提供原生接口引擎可供选择（目前原生接口无法在mac系统上使用）。
 
 安装
 ----------------------
@@ -43,21 +44,23 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的小型ORM库�
     HOST = 'localhost'
     PORT = 6041
     # 默认端口 6041，默认用户名：root,默认密码：taosdata
-    db = TdEngineDatabase(DATABASENAME,host=HOST)
+    db = TdEngineDatabase(DATABASENAME,host=HOST) #新建数据库对象
     # 如不使用默认值，可以如下传入参数
     # db = TdEngineDatabase(DATABASENAME,host=HOST,port=PORT,user='yourusername',passwd='yourpassword')
 
 
-    # 表模型类继承自Model类
+    # 表模型类继承自Model类，每个模型类对应数据库中的一张表，模型类中定义的每个Field，对应表中的一列
     class Meter1(Model):
         cur = FloatField(db_column='c1')
         curInt = IntegerField(db_column='c2')
         curDouble = DoubleField(db_column='c3')
         desc = BinaryField(db_column='des')
-        class Meta:
+
+        class Meta: #Meta子类中定义模型类的配置信息
             database = db #指定表所使用的数据库
             db_table = 'meter1' #指定表名
 
+    # 可选择的全部Field类型如下，类型与Tdengine支持的数据类型一一对应
     class AllField(Model):
         name_float = FloatField(column_name='n_float') #可选项：指定列名
         name_double = DoubleField()
