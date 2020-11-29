@@ -2,7 +2,7 @@ import pytest
 from crown import *
 import datetime
 DATABASENAME = 'taos_test'
-HOST = '121.36.56.117'
+HOST = 'localhost'
 db = TdEngineDatabase('taos_test',host=HOST)
 
 # test all field 
