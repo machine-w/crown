@@ -47,8 +47,8 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的小型ORM库�
     # 如不使用默认值，可以如下传入参数
     # db = TdEngineDatabase(DATABASENAME,host=HOST,port=PORT,user='yourusername',passwd='yourpassword')
 
-    
 
+    # 表模型类继承自Model类
     class Meter1(Model):
         cur = FloatField(db_column='c1')
         curInt = IntegerField(db_column='c2')
@@ -68,7 +68,7 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的小型ORM库�
         name_nchar = NCharField(max_length=59)
         name_binary = BinaryField(max_length=3)
         name_ = BooleanField()
-        dd = PrimaryKeyField()
+        dd = PrimaryKeyField() # 如果定义了主键列，则使用主键列作为主键，如果没有定义，则默认“ts”为主键。
         birthday = DateTimeField()
         class Meta:
             database = db
@@ -100,3 +100,38 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的小型ORM库�
     # db.drop_table(Meter1,safe=True) #通过数据库对象删表，功能同上
     Meter1.table_exists() #查看表是否存在，存在返回True,不存在返回：False
 
+超级表定义：
+
+.. code-block:: python
+    # 超级表模型类继承自SuperModel类
+    class Meters(SuperModel):
+        cur = FloatField(db_column='c1')
+        curInt = IntegerField(db_column='c2')
+        curDouble = DoubleField(db_column='c3')
+        desc = BinaryField(db_column='des')
+        class Meta:
+            database = db
+            db_table = 'meters'
+            # Meta类中定义的Field，为超级表的标签
+            location = BinaryField(max_length=30)
+            groupid = IntegerField(db_column='gid')
+
+超级表的建表、删表、检查表是否存在：
+
+.. code-block:: python
+
+    Meters.create_table(safe=True) #建表 safe：如果表存在，则跳过建表指令。命令运行成功放回True,失败raise错误
+    # db.create_table(Meters,safe=True) #通过数据库对象建表，功能同上
+    Meters.drop_table(safe=True) #删表 safe：如果表不存在，则跳过删表指令。命令运行成功放回True,失败raise错误
+    # db.drop_table(Meters,safe=True) #通过数据库对象删表，功能同上
+    Meters.supertable_exists() #查看表是否存在，存在返回True,不存在返回：False
+
+从超级表建立子表：
+
+.. code-block:: python
+
+    SonTable_d3 = Meters.create_son_table('d3',location='beijing',groupid=3) #生成字表模型类的同时，自动在数据库中建表。
+
+    SonTable_d3.table_exists() # SonTable_d3的使用方法和继承自Modle类的模型类一样。可以进行插入与查询操作
+    # m = SonTable_d3(cur = 65.8,curInt=10,curDouble=1.1,desc='g1',ts = datetime.datetime.now())
+    # m.save()
