@@ -1,0 +1,33 @@
+from setuptools import setup
+from os import path
+
+DIR = path.dirname(path.abspath(__file__))
+INSTALL_PACKAGES = open(path.join(DIR, 'requirements.txt')).read().splitlines()
+
+with open(path.join(DIR, 'README.md')) as f:
+    README = f.read()
+
+setup(
+    name='crown',
+    packages=['crown'],
+    description="crown is a simple and small ORM for Time Series Database (TSDB) tdengine(taos), making it easy to learn and intuitive to use.",
+    long_description=README,
+    long_description_content_type='text/markdown',
+    install_requires=INSTALL_PACKAGES,
+    version='0.0.1',
+    url='https://github.com/machine-w/crown',
+    author='machine-w',
+    author_email='steve2008.ma@gmail.com',
+    keywords=['orm','taos', 'TDengine', 'TSDB','Time Series Database','connector','python'],
+    tests_require=[
+        'pytest',
+        'pytest-faker',
+        'pytest-sugar'
+    ],
+    package_data={
+        # include json and txt files
+        '': ['*.json','*.txt'],
+    },
+    include_package_data=True,
+    python_requires='>=3'
+)
