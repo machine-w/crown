@@ -14,7 +14,7 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的小型ORM库�
 
 .. code-block:: console
 
-    pip install peewee
+    pip install crown
 
 
 还可以通过git安装，项目地址： https://github.com/machine-w/crown
