@@ -43,6 +43,7 @@ class Database(object):
                 raise Exception('Error, database not properly initialized before opening connection')
             self.__local.conn = self._connect(self.database, **self.connect_kwargs)
             self.__local.closed = False
+            self.create_database(safe=True)
             self.get_databases()
 
     def close(self):
