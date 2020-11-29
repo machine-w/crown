@@ -44,7 +44,7 @@ class Database(object):
             self.__local.conn = self._connect(self.database, **self.connect_kwargs)
             self.__local.closed = False
             self.create_database(safe=True)
-            self.get_databases()
+            # self.get_databases()
 
     def close(self):
         with self._conn_lock:
