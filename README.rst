@@ -32,13 +32,11 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
 简单使用
 -------
 
-模型定义:
+建立数据库与删除数据库:
 
 .. code-block:: python
 
     from crown import *
-    import datetime
-
 
     DATABASENAME = 'taos_test'
     HOST = 'localhost'
@@ -47,7 +45,26 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
     db = TdEngineDatabase(DATABASENAME,host=HOST) #新建数据库对象
     # 如不使用默认值，可以如下传入参数
     # db = TdEngineDatabase(DATABASENAME,host=HOST,port=PORT,user='yourusername',passwd='yourpassword')
+    db.create_database(safe=True)  #建库指令。 （safe：如果库存在，则跳过建库指令。）
+    # db.create_database(safe=True,keep= 100,comp=0,replica=1,quorum=2,blocks=115) #可选字段：建库时配置数据库参数，具体字段含义请参考tdengine文档。
+    db.drop_database(safe=True) #删库指令 （safe：如果库不存在，则跳过删库指令。）
 
+修改数据库参数:
+
+.. code-block:: python
+
+    db.alter_database(keep= 120,comp=1,replica=1,quorum=1,blocks=156) #同建库可选字段。
+
+模型定义:
+
+.. code-block:: python
+
+    from crown import *
+
+    DATABASENAME = 'taos_test'
+    HOST = 'localhost'
+    db = TdEngineDatabase(DATABASENAME,host=HOST) #新建数据库对象
+    db.create_database(safe=True)  #建库 safe：如果库存在，则跳过建库指令。
 
     # 表模型类继承自Model类，每个模型类对应数据库中的一张表，模型类中定义的每个Field，对应表中的一列
     class Meter1(Model):
@@ -77,20 +94,7 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
             database = db
             db_table = 'all_field'
 
-建立数据库与删除数据库:
 
-.. code-block:: python
-
-    db.create_database(safe=True)  #建库 safe：如果库存在，则跳过建库指令。
-    # db.create_database(safe=True,keep= 100,comp=0,replica=1,quorum=2,blocks=115) #可选字段：建库时配置数据库参数，具体字段含义请参考tdengine文档。
-    db.drop_database(safe=True) #删库 safe：如果库不存在，则跳过删库指令。
-
-
-修改数据库参数:
-
-.. code-block:: python
-
-    db.alter_database(keep= 120,comp=1,replica=1,quorum=1,blocks=156) #同建库可选字段。
 
 
 建表、删表、检查表是否存在：
