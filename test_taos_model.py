@@ -130,7 +130,7 @@ def test_table_insert():
 @pytest.fixture()
 def insertData():
     db.create_database(safe=True)
-    Meter1.create_table()
+    Meter1.create_table(safe=True)
     for i in range(1,11):
         m = Meter1(cur = 1/i,curInt=i,curDouble=1/i+10,desc='g1',ts= datetime.datetime.now() - datetime.timedelta(hours=(12-i)))
         m.save()
@@ -141,6 +141,39 @@ def insertData():
     yield
 
     Meter1.drop_table()
+def test_Meter1_select_one(insertData):
+    res = Meter1.select().one()
+    assert res.desc == 'g2'
+    assert res.curDouble == 11.0
+    assert res.curInt == 1
+    assert res.cur == 1
+    assert res.ts<=datetime.datetime.now()
+    res = Meter1.select(Meter1.cur,Meter1.desc).one()
+    assert res.desc == 'g2'
+    assert res.curDouble == None
+    assert res.curInt == None
+    assert res.cur == 1
+    assert res.ts == None
+
+def test_Meter1_select_all(insertData):
+    ress = Meter1.select().all()
+    assert len(ress) == 30
+    for res in ress:
+        assert res.desc == 'g2' or res.desc == 'g1'
+        assert isinstance(res.curDouble,float)
+        assert isinstance(res.curInt,int)
+        assert isinstance(res.cur,float)
+        assert res.ts<=datetime.datetime.now()
+    ress = Meter1.select(Meter1.cur,Meter1.desc).all()
+    assert len(ress) == 30
+    for res in ress:
+        assert res.desc == 'g2' or res.desc == 'g1'
+        assert res.curDouble == None
+        assert res.curInt == None
+        assert isinstance(res.cur,float)
+        assert res.ts == None
+    # TODO: select operation
+
 
 def test_Meter1_groupby(insertData):
     groups= Meter1.select(Meter1.desc,Meter1.curInt.count(),Meter1.cur.count().alias('cc1')).group_by(Meter1.desc).all()

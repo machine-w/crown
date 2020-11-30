@@ -151,7 +151,7 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
     # db.drop_table(Meter1,safe=True) #通过数据库对象删表，功能同上
     Meter1.table_exists() #查看表是否存在，存在返回True,不存在返回：False
 
- 插入数据：
+插入数据：
 
 .. code-block:: python
 
@@ -171,6 +171,34 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
     Meter1.insert(cur = 1/i,curInt=i,curDouble=1/i+10,desc='g1')
     m = Meter1(cur = 1/i,curInt=i,curDouble=1/i+10,desc='g1')
     m.save()
+
+查询单条数据：
+
+.. code-block:: python
+
+    #获取一条数据
+    #使用select()类方法获取查询字段（参数留空表示取全部字段），然后可以链式使用one方法获取第一条数据
+    res = Meter1.select().one()
+    print(res.desc,res.curDouble,res.curInt,res.cur,res.ts)
+
+    #select函数中可以选择要读取的字段
+    res = Meter1.select(Meter1.cur,Meter1.desc).one()
+    print(res.desc,res.curDouble,res.curInt,res.cur,res.ts)
+
+查询全部数据：
+
+.. code-block:: python
+
+    #获取一条数据
+    #使用select()类方法获取查询字段（参数留空表示取全部字段），然后可以链式使用all方法获取全部数据
+    res_all = Meter1.select().all()
+    for res in res_all:
+        print(res.desc,res.curDouble,res.curInt,res.cur,res.ts)
+
+    #select函数中可以选择要读取的字段
+    res_all = Meter1.select(Meter1.cur,Meter1.desc).all()
+    for res in res_all:
+        print(res.desc,res.curDouble,res.curInt,res.cur,res.ts)
 
 超级表定义：
 
