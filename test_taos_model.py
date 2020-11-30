@@ -30,8 +30,8 @@ class Meter1(Model):
             # order_by= ['-ts']
             database = db
             db_table = 'meter1'
-class Meter(Model):
-        cur = FloatField(db_column='c1')
+# class Meter(Model):
+#         cur = FloatField(db_column='c1')
 
 def test_create_drop_table():
     assert Meter1.create_table()
@@ -39,6 +39,37 @@ def test_create_drop_table():
     assert Meter1.table_exists()
     assert Meter1.drop_table()
     assert not Meter1.table_exists()
+def test_table_primary():
+    class TestPri(Model):
+        cur = FloatField(db_column='c1')
+        class Meta:
+            database = db
+    TestPri.create_table(safe=True)
+    res = TestPri.describe_table()
+    assert res[0][0] == 'ts'
+    TestPri.drop_table(safe=True)
+
+def test_table_primary2():
+    class TestPri(Model):
+        cur = FloatField(db_column='c1')
+        timeline = PrimaryKeyField()
+        class Meta:
+            database = db
+    TestPri.create_table(safe=True)
+    res = TestPri.describe_table()
+    assert res[0][0] == 'timeline'
+    TestPri.drop_table(safe=True)
+
+def test_table_primary3():
+    class TestPri(Model):
+        cur = FloatField(db_column='c1')
+        class Meta:
+            database = db
+            primary_key = 'ttt'
+    TestPri.create_table(safe=True)
+    res = TestPri.describe_table()
+    assert res[0][0] == 'ttt'
+    TestPri.drop_table(safe=True)
 
 @pytest.fixture()
 def insertData():

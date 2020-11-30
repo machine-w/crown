@@ -63,9 +63,10 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
 
     #可以通过数据库对象直接执行sql语句，语句规则与TDengine restful接口要求一致。
     res = db.raw_sql('select c1,c2 from taos_test.member1')
-    print(res,res.head) #返回的对象为二维数据。res.head属性为数组对象，保存每一行数据的代表的列名。
+    print(res,res.head,res.rowcount) #返回的对象为二维数据。res.head属性为数组对象，保存每一行数据的代表的列名。res.rowcount属性保存返回行数。
     # res: [[1.2,2.2],[1.3,2.1],[1.5,2.0],[1.6,2.1]]
     # res.head: ['c1','c2']
+    # res.rowcount: 4
 
 模型定义:
 
@@ -107,7 +108,34 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
             database = db
             db_table = 'all_field'
 
+主键定义：
 
+.. code-block:: python
+
+    #不定义主键，系统默认主键：“ts”
+    class TestPri(Model):
+        cur = FloatField(db_column='c1')
+        class Meta:
+            database = db
+    res = TestPri.describe_table() #获取表结构信息
+    print(res[0][0]) # 结果: “ts”
+
+    class TestPri(Model):
+        cur = FloatField(db_column='c1')
+        timeline = PrimaryKeyField() #定义主键列，主键名设置为列名
+        class Meta:
+            database = db
+    res = TestPri.describe_table()
+    print(res[0][0]) # 结果: “timeline”
+
+    class TestPri(Model):
+        cur = FloatField(db_column='c1')
+        class Meta:
+            database = db
+            primary_key = 'timeline' # Meta中定主键名称
+    res = TestPri.describe_table()
+    print(res[0][0]) # 结果: “timeline”
+    
 
 
 建表、删表、检查表是否存在：

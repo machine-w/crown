@@ -112,6 +112,9 @@ class BaseModel(type):
                 attr.add_to_class(cls, name)
                 if isinstance(attr, PrimaryKeyField):
                     primary_key = attr
+        if cls._meta.primary_key:
+            primary_key = PrimaryKeyField()
+            primary_key.add_to_class(cls, cls._meta.primary_key)
         if not primary_key:
             primary_key = PrimaryKeyField()
             primary_key.add_to_class(cls, 'ts')
@@ -156,6 +159,9 @@ class Model(metaclass=BaseModel):
     @classmethod
     def drop_table(cls,safe=True):
         return cls._meta.database.drop_table(cls,safe)
+    @classmethod
+    def describe_table(cls):
+        return cls._meta.database.describe_table(cls)
     @classmethod
     def table_exists(cls):
         return cls._meta.db_table[cls._meta.db_table.index('.')+1:]  in cls._meta.database.get_tables()

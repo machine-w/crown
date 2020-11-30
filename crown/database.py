@@ -166,6 +166,10 @@ class Database(object):
     def drop_table(self, model_class, safe=False):
         qc = self.get_compiler()
         return [[0]] == self.execute_sql(qc.drop_table(model_class, safe))
+    
+    def describe_table(self, model_class):
+        qc = self.get_compiler()
+        return self.execute_sql(qc.describe_table(model_class))
 
     def raw_sql(self, sql, *params):
         return self.execute_sql(sql.replace("?", "{}"),params)

@@ -287,6 +287,10 @@ class QueryCompiler(object):
         return ' '.join(self.parse_drop_database(database, safe))
     def create_table(self, model_class, safe=False):
         return ' '.join(self.parse_create_table(model_class, safe))
+    def describe_table(self,model_class):
+        parts = ['DESCRIBE ']
+        parts.append(self.quote(model_class._meta.db_table))
+        return ' '.join(parts)
     def drop_table(self, model_class, fail_silently=False, cascade=False):
         parts = ['DROP TABLE']
         if fail_silently:
