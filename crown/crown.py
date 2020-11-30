@@ -24,7 +24,8 @@ class ModelOptions(object):
         self.database = database or default_database
         self.db_table = db_table
         self.order_by = order_by
-        self.primary_key = primary_key
+        self.primary_key_name = primary_key
+        self.primary_key = None
         # self.rel = {}
         # self.reverse_rel = {}
     def __str__(self) -> str:
@@ -112,12 +113,9 @@ class BaseModel(type):
                 attr.add_to_class(cls, name)
                 if isinstance(attr, PrimaryKeyField):
                     primary_key = attr
-        if cls._meta.primary_key:
-            primary_key = PrimaryKeyField()
-            primary_key.add_to_class(cls, cls._meta.primary_key)
         if not primary_key:
             primary_key = PrimaryKeyField()
-            primary_key.add_to_class(cls, 'ts')
+            primary_key.add_to_class(cls, cls._meta.primary_key_name or 'ts')
 
         cls._meta.primary_key = primary_key
 
