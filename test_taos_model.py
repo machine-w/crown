@@ -3,8 +3,8 @@ from faker.generator import Generator
 from crown import *
 import datetime
 DATABASENAME = 'taos_test'
-HOST = '121.36.56.117'
-db = TdEngineDatabase(DATABASENAME,host=HOST,user="root",passwd="msl110918")
+HOST = 'localhost'
+db = TdEngineDatabase(DATABASENAME,host=HOST,user="root",passwd="taosdata")
 class AllField(Model):
         name_float = FloatField(column_name='nf1')
         name_double = DoubleField()
