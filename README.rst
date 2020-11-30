@@ -101,7 +101,7 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
         name_tinyint = TinyIntegerField()
         name_nchar = NCharField(max_length=59)
         name_binary = BinaryField(max_length=3)
-        name_ = BooleanField()
+        name_bool = BooleanField()
         dd = PrimaryKeyField() # 如果定义了主键列，则使用主键列作为主键，如果没有定义，则默认“ts”为主键。
         birthday = DateTimeField()
         class Meta:
@@ -112,6 +112,7 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
 
 .. code-block:: python
 
+    #定义主键方式1 
     #不定义主键，系统默认主键：“ts”
     class TestPri(Model):
         cur = FloatField(db_column='c1')
@@ -120,6 +121,7 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
     res = TestPri.describe_table() #获取表结构信息
     print(res[0][0]) # 结果: “ts”
 
+    #定义主键方式2
     class TestPri(Model):
         cur = FloatField(db_column='c1')
         timeline = PrimaryKeyField() #定义主键列，主键名设置为列名
@@ -128,6 +130,7 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
     res = TestPri.describe_table()
     print(res[0][0]) # 结果: “timeline”
 
+     #定义主键方式3
     class TestPri(Model):
         cur = FloatField(db_column='c1')
         class Meta:
