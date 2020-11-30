@@ -93,13 +93,13 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
 
     # 可选择的全部Field类型如下，类型与Tdengine支持的数据类型一一对应
     class AllField(Model):
-        name_float = FloatField(column_name='n_float') #可选项：指定列名
+        name_float = FloatField(column_name='nf1') #可选项：指定列名
         name_double = DoubleField()
         name_bigint = BigIntegerField()
         name_int = IntegerField()
         name_smallint = SmallIntegerField()
         name_tinyint = TinyIntegerField()
-        name_nchar = NCharField(max_length=59)
+        name_nchar = NCharField(max_length=59,db_column='n1')
         name_binary = BinaryField(max_length=3)
         name_bool = BooleanField()
         dd = PrimaryKeyField() # 如果定义了主键列，则使用主键列作为主键，如果没有定义，则默认“ts”为主键。
@@ -150,6 +150,27 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
     Meter1.drop_table(safe=True) #删表 safe：如果表不存在，则跳过删表指令。命令运行成功放回True,失败raise错误
     # db.drop_table(Meter1,safe=True) #通过数据库对象删表，功能同上
     Meter1.table_exists() #查看表是否存在，存在返回True,不存在返回：False
+
+ 插入数据：
+
+.. code-block:: python
+
+    #方法一
+    for i in range(1,101):
+        #使用模型类实例化的每个对象对应数据表中的每一行，可以通过传入属性参数的方式给每一列赋值
+        m = Meter1(cur = 1/i,curInt=i,curDouble=1/i+10,desc='g1',ts= datetime.datetime.now() - datetime.timedelta(seconds=(102-i)))
+        #使用对象的save方法将数据存入数据库
+        m.save()
+    print(Meter1.select().count()) # 结果：100
+    #方法二
+    for i in range(1,11):
+        #也可以直接使用模型类的insert方法插入数据。
+        Meter1.insert(cur = 1/i,curInt=i,curDouble=1/i+10,desc='g1',ts= datetime.datetime.now() - datetime.timedelta(seconds=(12-i)))
+    print(Meter1.select().count()) # 结果：100
+    #如果不传入时间属性，则会以当前时刻为默认值传入
+    Meter1.insert(cur = 1/i,curInt=i,curDouble=1/i+10,desc='g1')
+    m = Meter1(cur = 1/i,curInt=i,curDouble=1/i+10,desc='g1')
+    m.save()
 
 超级表定义：
 

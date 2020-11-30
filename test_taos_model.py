@@ -6,13 +6,13 @@ DATABASENAME = 'taos_test'
 HOST = 'localhost'
 db = TdEngineDatabase(DATABASENAME,host=HOST)
 class AllField(Model):
-        name_float = FloatField(column_name='n_float')
+        name_float = FloatField(column_name='nf1')
         name_double = DoubleField()
         name_bigint = BigIntegerField()
         name_int = IntegerField()
         name_smallint = SmallIntegerField()
         name_tinyint = TinyIntegerField()
-        name_nchar = NCharField(max_length=59,)
+        name_nchar = NCharField(max_length=59,db_column='n1')
         name_binary = BinaryField(max_length=3)
         name_ = BooleanField()
         dd = PrimaryKeyField()
@@ -71,6 +71,35 @@ def test_table_primary3():
     assert res[0][0] == 'ttt'
     TestPri.drop_table(safe=True)
 
+def test_table_save():
+    Meter1.create_table(safe=True)
+    for i in range(1,101):
+        m = Meter1(cur = 1/i,curInt=i,curDouble=1/i+10,desc='g1',ts= datetime.datetime.now() - datetime.timedelta(seconds=(102-i)))
+        m.save()
+    assert Meter1.select().count() == 100
+    for i in range(1,101):
+        m = Meter1(cur = 1/i,curInt=i,curDouble=1/i+10,desc='g1')
+        m.save()
+    assert Meter1.select().count() == 200
+    Meter1.drop_table()
+
+def test_table_insert():
+    Meter1.create_table(safe=True)
+    for i in range(1,11):
+        Meter1.insert(cur = 1/i,curInt=i,curDouble=1/i+10,desc='g1',ts= datetime.datetime.now() - datetime.timedelta(seconds=(12-i)))
+    res = Meter1.select().all()
+    for item in res:
+        print(item.ts)
+    assert Meter1.select().count() == 10
+    for i in range(1,11):
+        Meter1.insert(cur = 1/i,curInt=i,curDouble=1/i+10,desc='g1')
+    res = Meter1.select().all()
+    for item in res:
+        print(item.ts)
+    assert Meter1.select().count() == 20
+    Meter1.drop_table()
+
+
 @pytest.fixture()
 def insertData():
     db.create_database(safe=True)
@@ -85,8 +114,6 @@ def insertData():
     yield
 
     Meter1.drop_table()
-    
-# 
 
 def test_Meter1_groupby(insertData):
     groups= Meter1.select(Meter1.desc,Meter1.curInt.count(),Meter1.cur.count().alias('cc1')).group_by(Meter1.desc).all()
@@ -104,7 +131,3 @@ def test_Meter1_groupby(insertData):
 #     for result in results:
 #         print(result.aa,result.bb)
 #     assert True
-
-
-
-
