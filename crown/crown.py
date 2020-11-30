@@ -172,6 +172,10 @@ class Model(metaclass=BaseModel):
         return query
     @classmethod
     def insert(cls, **insert):
+        pk = cls._meta.primary_key
+        if pk.name not in insert:
+            now = datetime.now()
+            insert[pk.name] = now
         fdict = []
         for field in cls._meta.get_field_names():
             if field in insert:
@@ -179,7 +183,7 @@ class Model(metaclass=BaseModel):
                 if isinstance(value,datetime):
                     value = value.strftime("%Y-%m-%d %H:%M:%S.%f")
                 fdict.append({'obj':cls._meta.fields[field],'value':value})
-        return InsertQuery(cls, fdict)
+        return InsertQuery(cls, fdict).execute()
     def save(self):
         field_dict = dict(self._data)
         pk = self._meta.primary_key
@@ -187,8 +191,8 @@ class Model(metaclass=BaseModel):
             now = datetime.now()
             self.set_ts(now)
             field_dict[pk.name] = now
-        insert = self.insert(**field_dict)
-        return insert.execute()
+        # insert = self.insert(**field_dict)
+        return self.insert(**field_dict)
     def get(self,expr):
         p1 = re.compile(r'^\((.*?)\)$', re.S)
         query_expr=type(self)._meta.database.get_compiler().parse_expr(expr)
