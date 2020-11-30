@@ -33,12 +33,6 @@ class Meter1(Model):
 class Meter(Model):
         cur = FloatField(db_column='c1')
 
-def test_raw_sql():
-    res = db.raw_sql('CREATE DATABASE IF NOT EXISTS "test_raw" KEEP 50 COMP 1 REPLICA 1 BLOCKS 100 QUORUM 2')
-    # res = db.raw_sql('SELECT * FROM test5.d0003 where cur > ?',100)
-    # print(res,res.head)
-    assert res
-
 def test_create_drop_table():
     assert Meter1.create_table()
     print(db.get_tables())

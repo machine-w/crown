@@ -57,6 +57,16 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
 
     db.alter_database(keep= 120,comp=1,replica=1,quorum=1,blocks=156) #同建库可选字段。
 
+执行sql语句:
+
+.. code-block:: python
+
+    #可以通过数据库对象直接执行sql语句，语句规则与TDengine restful接口要求一致。
+    res = db.raw_sql('select c1,c2 from taos_test.member1')
+    print(res,res.head) #返回的对象为二维数据。res.head属性为数组对象，保存每一行数据的代表的列名。
+    # res: [[1.2,2.2],[1.3,2.1],[1.5,2.0],[1.6,2.1]]
+    # res.head: ['c1','c2']
+
 模型定义:
 
 .. code-block:: python
