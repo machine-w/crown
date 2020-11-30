@@ -3,8 +3,8 @@ from faker.generator import Generator
 from crown import *
 import datetime
 DATABASENAME = 'taos_test'
-HOST = 'localhost'
-db = TdEngineDatabase(DATABASENAME,host=HOST)
+HOST = '121.36.56.117'
+db = TdEngineDatabase(DATABASENAME,host=HOST,user="root",passwd="msl110918")
 class AllField(Model):
         name_float = FloatField(column_name='nf1')
         name_double = DoubleField()
@@ -14,12 +14,12 @@ class AllField(Model):
         name_tinyint = TinyIntegerField()
         name_nchar = NCharField(max_length=59,db_column='n1')
         name_binary = BinaryField(max_length=3)
-        name_ = BooleanField()
+        name_bool = BooleanField()
         dd = PrimaryKeyField()
         birthday = DateTimeField()
         class Meta:
             database = db
-            db_table = 'all_field'
+            db_table = 'allfield'
 # test table
 class Meter1(Model):
         cur = FloatField(db_column='c1')
@@ -70,6 +70,33 @@ def test_table_primary3():
     res = TestPri.describe_table()
     assert res[0][0] == 'ttt'
     TestPri.drop_table(safe=True)
+
+def test_table_save_one():
+    AllField.create_table(safe=True)
+    m = AllField(name_float = 1.1,\
+        name_double = 1.2,\
+        name_bigint = 999999999,\
+        name_int = 1000,\
+        name_smallint = 100,\
+        name_tinyint = 1,\
+        name_nchar = "test",\
+        name_binary = "tes",\
+        name_bool = True,\
+        birthday = datetime.datetime.now()\
+    )
+    m.save()
+    m1=AllField.select().one()
+    assert m1.name_float==1.1
+    assert m1.name_double==1.2
+    assert m1.name_bigint==999999999
+    assert m1.name_int==1000
+    assert m1.name_smallint==100
+    assert m1.name_tinyint==1
+    assert m1.name_nchar=="test"
+    assert m1.name_binary=="tes"
+    assert m1.name_bool==True
+    assert m1.birthday<=datetime.datetime.now()
+    AllField.drop_table()
 
 def test_table_save():
     Meter1.create_table(safe=True)
