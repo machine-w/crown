@@ -172,7 +172,22 @@ def test_Meter1_select_all(insertData):
         assert res.curInt == None
         assert isinstance(res.cur,float)
         assert res.ts == None
-    # TODO: select operation
+
+def test_Meter1_select_operation(insertData):
+    ress = Meter1.select(((Meter1.curDouble+Meter1.cur)*Meter1.curDouble).alias('aa'),Meter1.ts).all()
+    assert len(ress) == 30
+    for res in ress:
+        assert isinstance(res.aa,float)
+        # assert res.bb == 1.1
+        assert res.ts<=datetime.datetime.now()
+    
+    # TODO: tdengine restful api bug: miss bracket
+    ress = Meter1.select((Meter1.curDouble+Meter1.cur),Meter1.ts).all()
+    assert len(ress) == 30
+    for res in ress:
+        assert isinstance(res.get(Meter1.curDouble+Meter1.cur),float)
+        # assert res.bb == 1.1
+        assert res.ts<=datetime.datetime.now()
 
 
 def test_Meter1_groupby(insertData):

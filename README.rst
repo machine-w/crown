@@ -29,7 +29,7 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
     python setup.py install
 
 
-简单使用
+使用文档
 ------------------------
 
 建立数据库与删除数据库:
@@ -199,6 +199,20 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
     res_all = Meter1.select(Meter1.cur,Meter1.desc).all()
     for res in res_all:
         print(res.desc,res.curDouble,res.curInt,res.cur,res.ts)
+
+选择列四则运算：
+
+.. code-block:: python
+
+    #使用select()类方法获取查询字段时，可以返回某列或多列间的值加、减、乘、除、取余计算结果（+ - * / %）
+    res_all = Meter1.select((Meter1.curDouble+Meter1.cur),Meter1.ts).all()
+    for res in res_all:
+        print(res.get(Meter1.curDouble+Meter1.cur),res.ts) #返回的结果对象可以用get方法获取原始计算式结果
+
+    #字段别名
+    res_all = Meter1.select(((Meter1.curDouble+Meter1.cur)*Meter1.curDouble).alias('new_name'),Meter1.ts).all() #给运算式起别名（不仅运算式，其他放在select函数中的任何属性都可以使用别名）
+    for res in res_all:
+        print(res.new_name,res.ts) #使用别名获取运算结果
 
 超级表定义：
 
