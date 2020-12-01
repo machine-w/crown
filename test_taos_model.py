@@ -189,6 +189,16 @@ def test_Meter1_select_operation(insertData):
         # assert res.bb == 1.1
         assert res.ts<=datetime.datetime.now()
 
+def test_Meter1_select_where(insertData):
+    ress = Meter1.select().where(Meter1.cur > 0,Meter1.ts > datetime.datetime.now() - datetime.timedelta(hours=10),Meter1.desc % '%1').all()
+    assert len(ress) == 8
+    for res in ress:
+        assert res.desc == 'g2' or res.desc == 'g1'
+        assert isinstance(res.curDouble,float)
+        assert isinstance(res.curInt,int)
+        assert isinstance(res.cur,float)
+        assert res.ts<=datetime.datetime.now()
+
 
 def test_Meter1_groupby(insertData):
     groups= Meter1.select(Meter1.desc,Meter1.curInt.count(),Meter1.cur.count().alias('cc1')).group_by(Meter1.desc).all()

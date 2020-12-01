@@ -214,6 +214,18 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
     for res in res_all:
         print(res.new_name,res.ts) #使用别名获取运算结果
 
+where查询条件：
+
+.. code-block:: python
+
+    #可以在select函数后链式调用where函数进行条件限
+    one_time =datetime.datetime.now() - datetime.timedelta(hours=10)
+    ress = Meter1.select().where(Meter1.ts > one_time).all()
+    #限定条件可以使用 > < == >= <= != and or ! 等。字符类型的字段可以使用 % 作为模糊查询（相当于like）
+    ress = Meter1.select().where(Meter1.cur > 0 or Meter1.desc % 'g%').all()
+    #where函数可以接收任意多参数，每个参数为一个限定条件，参数条件之间为"与"的关系。
+    ress = Meter1.select().where(Meter1.cur > 0, Meter1.ts > one_time, Meter1.desc % '%1').all()
+
 超级表定义：
 
 .. code-block:: python
