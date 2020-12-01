@@ -226,6 +226,23 @@ where查询条件：
     #where函数可以接收任意多参数，每个参数为一个限定条件，参数条件之间为"与"的关系。
     ress = Meter1.select().where(Meter1.cur > 0, Meter1.ts > one_time, Meter1.desc % '%1').all()
 
+排序（目前tdengine只支持主键排序）：
+
+.. code-block:: python
+
+    #可以在select函数后链式调用desc或者asc函数进行时间轴的正序或者倒序查询
+    res = Meter1.select().desc().one()
+    #定义模型类的时候定义默认排序方法
+    class Meter1(Model):
+        cur = FloatField(db_column='c1')
+        curInt = IntegerField(db_column='c2')
+        curDouble = DoubleField(db_column='c3')
+        desc = BinaryField(db_column='des')
+        dd = PrimaryKeyField().desc() #可以在定义主键的时候调用field的desc或asc方法定义默认排序
+        class Meta:
+            # order_by= ['-dd'] #也可以在元数据类中定义‘-dd’代表倒序‘dd’ 代表正序
+            database = db
+
 超级表定义：
 
 .. code-block:: python

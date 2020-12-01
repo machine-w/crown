@@ -27,7 +27,7 @@ class Meter1(Model):
         curDouble = DoubleField(db_column='c3')
         desc = BinaryField(db_column='des')
         class Meta:
-            # order_by= ['-ts']
+            order_by= ['-ts']
             database = db
             db_table = 'meter1'
 # class Meter(Model):
@@ -198,6 +198,14 @@ def test_Meter1_select_where(insertData):
         assert isinstance(res.curInt,int)
         assert isinstance(res.cur,float)
         assert res.ts<=datetime.datetime.now()
+
+def test_Meter1_select_one_desc(insertData):
+    res = Meter1.select().desc().one()
+    assert res.desc == 'g2'
+    assert res.curDouble == 10.05
+    assert res.curInt == 20
+    assert res.cur == 0.05
+    assert res.ts<=datetime.datetime.now()
 
 
 def test_Meter1_groupby(insertData):
