@@ -469,7 +469,7 @@ class SelectQuery(Query):
         # TODO: 分组的情况下如何统计
         if self._group_by:
             clone._group_by = None
-        clone._select = [fn.TWA(field) for field in fields]
+        clone._select = [out_alias(field,fn.TWA) for field in fields]
         res = clone.execute()
         if len(res) > 0:
             return res[0]
@@ -481,7 +481,7 @@ class SelectQuery(Query):
         # TODO: 分组的情况下如何统计
         if self._group_by:
             clone._group_by = None
-        clone._select = [fn.SUM(field) for field in fields]
+        clone._select = [out_alias(field,fn.SUM) for field in fields]
         res = clone.execute()
         if len(res) > 0:
             return res[0]
@@ -493,7 +493,7 @@ class SelectQuery(Query):
         # TODO: 分组的情况下如何统计
         if self._group_by:
             clone._group_by = None
-        clone._select = [fn.STDDEV(field) for field in fields]
+        clone._select = [out_alias(field,fn.STDDEV) for field in fields]
         res = clone.execute()
         if len(res) > 0:
             return res[0]
@@ -505,7 +505,7 @@ class SelectQuery(Query):
         # TODO: 分组的情况下如何统计
         if self._group_by:
             clone._group_by = None
-        clone._select = [fn.MIN(field) for field in fields]
+        clone._select = [out_alias(field,fn.MIN) for field in fields]
         res = clone.execute()
         if len(res) > 0:
             return res[0]
@@ -517,7 +517,7 @@ class SelectQuery(Query):
         # TODO: 分组的情况下如何统计
         if self._group_by:
             clone._group_by = None
-        clone._select = [fn.MAX(field) for field in fields]
+        clone._select = [out_alias(field,fn.MAX) for field in fields]
         res = clone.execute()
         if len(res) > 0:
             return res[0]
@@ -529,7 +529,7 @@ class SelectQuery(Query):
         # TODO: 分组的情况下如何统计
         if self._group_by:
             clone._group_by = None
-        clone._select = [fn.FIRST(field) for field in fields]
+        clone._select = [out_alias(field,fn.FIRST) for field in fields]
         res = clone.execute()
         if len(res) > 0:
             return res[0]
@@ -541,7 +541,7 @@ class SelectQuery(Query):
         # TODO: 分组的情况下如何统计
         if self._group_by:
             clone._group_by = None
-        clone._select = [fn.LAST(field) for field in fields]
+        clone._select = [out_alias(field,fn.LAST) for field in fields]
         res = clone.execute()
         if len(res) > 0:
             return res[0]
@@ -555,7 +555,7 @@ class SelectQuery(Query):
         # TODO: 分组的情况下如何统计
         if self._group_by:
             clone._group_by = None
-        clone._select = [fn.LAST_ROW(field) for field in fields]
+        clone._select = [out_alias(field,fn.LAST_ROW) for field in fields]
         res = clone.execute()
         if len(res) > 0:
             return res[0]
@@ -567,7 +567,7 @@ class SelectQuery(Query):
         # TODO: 分组的情况下如何统计
         if self._group_by:
             clone._group_by = None
-        clone._select = [fn.SPREAD(field) for field in fields]
+        clone._select = [out_alias(field,fn.SPREAD) for field in fields]
         res = clone.execute()
         if len(res) > 0:
             return res[0]
@@ -579,7 +579,7 @@ class SelectQuery(Query):
         # TODO: 分组的情况下如何统计
         if self._group_by:
             clone._group_by = None
-        clone._select = [fn.DIFF(field) for field in fields]
+        clone._select = [out_alias(field,fn.DIFF) for field in fields]
         res = clone.execute()
         return res
     def top(self,field,top=1):

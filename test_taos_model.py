@@ -27,7 +27,7 @@ class Meter1(Model):
         curDouble = DoubleField(db_column='c3')
         desc = BinaryField(db_column='des')
         class Meta:
-            order_by= ['-ts']
+            # order_by= ['-ts']
             database = db
             db_table = 'meter1'
 # class Meter(Model):
@@ -207,15 +207,95 @@ def test_Meter1_select_one_desc(insertData):
     assert res.cur == 0.05
     assert res.ts<=datetime.datetime.now()
 
+def test_Meter1_count(insertData):
+    count = Meter1.select().count()
+    assert count == 30
+    count = Meter1.select().count(Meter1.desc)
+    assert count == 30
 
-def test_Meter1_groupby(insertData):
-    groups= Meter1.select(Meter1.desc,Meter1.curInt.count(),Meter1.cur.count().alias('cc1')).group_by(Meter1.desc).all()
-    for group in groups:
-        # print(group.desc)
-        if group.desc == 'g1':
-            assert group.get(Meter1.curInt.count()) == 10
-        if group.desc == 'g2':
-            assert group.cc1 == 20
+def test_Meter1_avg(insertData):
+    avg1 = Meter1.select().avg(Meter1.cur,Meter1.curDouble.alias('aa'))
+    assert avg1
+    if avg1:
+        assert avg1.get(Meter1.cur.avg()) == 0.217556933
+        assert avg1.aa == 10.21755693
+
+def test_Meter1_twa(insertData):
+    twa1 = Meter1.select().where(Meter1.ts > datetime.datetime(2020, 11, 19, 15, 9, 12, 946118),\
+                                Meter1.ts < datetime.datetime.now()).twa(Meter1.cur,Meter1.curDouble.alias('aa'))
+    assert twa1
+    if twa1:
+        assert twa1.get(Meter1.cur.twa()) > 0
+        assert twa1.aa > 0
+
+def test_Meter1_sum(insertData):
+    sum1 = Meter1.select().sum(Meter1.cur,Meter1.curDouble.alias('aa'))
+    assert sum1
+    if sum1:
+        assert sum1.get(Meter1.cur.sum()) == 6.526707981
+        assert sum1.aa == 306.526707911
+
+def test_Meter1_stddev(insertData):
+    stddev1 = Meter1.select().stddev(Meter1.cur,Meter1.curDouble.alias('aa'))
+    assert stddev1
+    if stddev1:
+        assert stddev1.get(Meter1.cur.stddev()) == 0.239861101
+        assert stddev1.aa == 0.239861101
+
+def test_Meter1_min(insertData):
+    min1 = Meter1.select().min(Meter1.cur,Meter1.curDouble.alias('aa'))
+    assert min1
+    if min1:
+        assert min1.get(Meter1.cur.min()) == 0.05
+        assert min1.aa == 10.05
+
+def test_Meter1_max(insertData):
+    max1 = Meter1.select().max(Meter1.cur,Meter1.curDouble.alias('aa'))
+    assert max1
+    if max1:
+        assert max1.get(Meter1.cur.max()) == 1.0
+        assert max1.aa == 11.0
+
+def test_Meter1_first(insertData):
+    first1 = Meter1.select().first(Meter1.cur,Meter1.curDouble.alias('aa'))
+    assert first1
+    if first1:
+        assert first1.get(Meter1.cur.first()) == 1.0
+        assert first1.aa == 11.0
+def test_Meter1_last(insertData):
+    last1 = Meter1.select().last(Meter1.cur,Meter1.curDouble.alias('aa'))
+    assert last1
+    if last1:
+        assert last1.get(Meter1.cur.last()) == 0.05
+        assert last1.aa == 10.05
+
+def test_Meter1_last_row(insertData):
+    last_row1 = Meter1.select().last_row(Meter1.cur,Meter1.curDouble.alias('aa'))
+    assert last_row1
+    if last_row1:
+        assert last_row1.get(Meter1.cur.last_row()) == 0.05
+        assert last_row1.aa == 10.05
+
+def test_Meter1_spread(insertData):
+    spread1 = Meter1.select().spread(Meter1.cur,Meter1.curDouble.alias('aa'))
+    assert spread1
+    if spread1:
+        assert spread1.get(Meter1.cur.spread()) == 0.949999999
+        assert spread1.aa == 0.95
+
+def test_Meter1_diff(insertData):
+    # TODO: bug多列报错
+    diffs = Meter1.select().diff(Meter1.curInt.alias('aa'))
+    for diff1 in diffs:
+        assert diff1.aa in [1,-8,9]
+# def test_Meter1_groupby(insertData):
+#     groups= Meter1.select(Meter1.desc,Meter1.curInt.count(),Meter1.cur.count().alias('cc1')).group_by(Meter1.desc).all()
+#     for group in groups:
+#         # print(group.desc)
+#         if group.desc == 'g1':
+#             assert group.get(Meter1.curInt.count()) == 10
+#         if group.desc == 'g2':
+#             assert group.cc1 == 20
 
 
 # TODO: invalid SQL: start(end) time of query range required or time range too large
