@@ -250,7 +250,7 @@ where查询条件：
     #count
     count = Meter1.select().count() #统计行数
     print(count) # 结果： 100
-    count = Meter1.select().count(Meter1.desc) #统计定制列非空行数
+    count = Meter1.select().count(Meter1.desc) #统计指定列非空行数
     print(count) # 结果： 90
     #avg（sum,stddev,min,max,first,last,last_row,spread使用方法与avg相同）
     avg1 = Meter1.select().avg(Meter1.cur,Meter1.curDouble.alias('aa')) #可以同时获取多列，并且可以使用别名
