@@ -243,6 +243,29 @@ where查询条件：
             # order_by= ['-dd'] #也可以在元数据类中定义‘-dd’代表倒序‘dd’ 代表正序
             database = db
 
+聚合函数：
+
+.. code-block:: python
+
+    #count
+    count = Meter1.select().count() #统计行数
+    print(count) # 结果： 100
+    count = Meter1.select().count(Meter1.desc) #统计定制列非空行数
+    print(count) # 结果： 90
+    #avg（sum,stddev,min,max,first,last,last_row,spread使用方法与avg相同）
+    avg1 = Meter1.select().avg(Meter1.cur,Meter1.curDouble.alias('aa')) #可以同时获取多列，并且可以使用别名
+    print(avg1.get(Meter1.cur.avg()),avg1.aa) #打印统计结果
+    #twa 必须配合where函数，且必须选择时间段
+    twa1 = Meter1.select().where(Meter1.ts > datetime.datetime(2020, 11, 19, 15, 9, 12, 946118),Meter1.ts < datetime.datetime.now()).twa(Meter1.cur,Meter1.curDouble.alias('aa'))
+    print(twa1.get(Meter1.cur.twa()),avg1.aa) #打印统计结果
+
+    #diff
+    diffs = Meter1.select().diff(Meter1.curInt.alias('aa')) #diff目前只可以聚合一个属性。
+    for diff1 in diffs:
+        print(diff1.aa)
+
+
+
 超级表定义：
 
 .. code-block:: python
