@@ -35,6 +35,13 @@ logger = logging.getLogger('crown')
 Ordering = namedtuple('Ordering', ('param', 'asc'))
 R = namedtuple('R', ('value',))
 # Join = namedtuple('Join', ('model_class', 'join_type', 'on'))
+def out_alias(field,fun):
+        if field._alias:
+            name = field._alias
+            field._alias = None
+            return fun(field).alias(name)
+        else:
+            return fun(field)
 
 def dict_update(orig, extra):
     new = {}

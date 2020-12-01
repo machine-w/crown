@@ -448,14 +448,13 @@ class SelectQuery(Query):
             return res[0][0]
         else:
             return 0
-    
     def avg(self,*fields):
         clone = self.order_by()
         clone._limit = clone._offset = None
         # TODO: 分组的情况下如何统计
         if self._group_by:
             clone._group_by = None
-        clone._select = [fn.AVG(field) for field in fields]
+        clone._select = [out_alias(field,fn.AVG) for field in fields]
         res = clone.execute()
         if len(res) > 0:
             return res[0]
