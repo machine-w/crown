@@ -272,6 +272,16 @@ where查询条件：
     for top1 in tops:
         print(top1.get(Meter1.cur.top(3))) #不指定别名，需用使用get方法获取属性
 
+    #percentile (apercentile函数使用方式相同) 
+    percentile1 = Meter1.select().percentile((Meter1.cur,1,'aa'),(Meter1.curDouble,2)) #每个属性参数为一个元组（数组），分别定义要统计的属性，P值（P值取值范围0≤P≤100），可选别名。
+    print(percentile1.aa)
+    print(percentile1.get(Meter1.curDouble.percentile(2)))#不指定别名，需用使用get方法获取属性
+
+    #leastsquares
+    leastsquares1 = Meter1.select().leastsquares((Meter1.cur,1,1,'aa'),(Meter1.curDouble,2,2)) #每个属性参数为一个元组（数组），分别定义要统计的属性，start_val(自变量初始值)，step_val(自变量的步长值)，可选别名。
+    print(leastsquares1.aa) # 结果： {slop:-0.001595, intercept:0.212111}
+    print(leastsquares1.get(Meter1.curDouble.leastsquares(2,2))) #不指定别名，需用使用get方法获取属性
+
 
 
 超级表定义：

@@ -303,6 +303,48 @@ def test_Meter1_bottom(insertData):
         assert bottom1.aa in [0.05556,0.05263,0.05]
         assert bottom1.cur == None
         assert bottom1.ts<=datetime.datetime.now()
+        
+def test_Meter1_apercentile(insertData):
+    apercentile1 = Meter1.select().apercentile((Meter1.cur,1,'aa'),(Meter1.curDouble,2))
+    assert apercentile1.aa == 0.050000001
+    assert apercentile1.cur == None
+    assert apercentile1.get(Meter1.curDouble.apercentile(2)) == 10.05
+    try:
+        apercentile1 = Meter1.select().apercentile((Meter1.cur,))
+    except Exception as e:
+        assert str(e) == 'field param less than 2'
+    try:
+        apercentile1 = Meter1.select().apercentile(Meter1.cur)
+    except Exception as e:
+        assert str(e) == 'field is not a tuple or list'
+
+def test_Meter1_percentile(insertData):
+    percentile1 = Meter1.select().percentile((Meter1.cur,1,'aa'),(Meter1.curDouble,2))
+    assert percentile1.aa == 0.0
+    assert percentile1.cur == None
+    # assert percentile1.bb == 10.051526316
+    assert percentile1.get(Meter1.curDouble.percentile(2)) == 10.051526316
+    try:
+        percentile1 = Meter1.select().percentile((Meter1.cur,))
+    except Exception as e:
+        assert str(e) == 'field param less than 2'
+    try:
+        percentile1 = Meter1.select().percentile(Meter1.cur)
+    except Exception as e:
+        assert str(e) == 'field is not a tuple or list'
+def test_Meter1_leastsquares(insertData):
+    leastsquares1 = Meter1.select().leastsquares((Meter1.cur,1,1,'aa'),(Meter1.curDouble,2,2))
+    assert leastsquares1.aa.find('slop')
+    assert leastsquares1.cur == None
+    assert leastsquares1.get(Meter1.curDouble.leastsquares(2,2)).find('slop')
+    try:
+        leastsquares1 = Meter1.select().leastsquares((Meter1.cur,))
+    except Exception as e:
+        assert str(e) == 'field param less than 3'
+    try:
+        leastsquares1 = Meter1.select().leastsquares(Meter1.cur)
+    except Exception as e:
+        assert str(e) == 'field is not a tuple or list'
 # def test_Meter1_groupby(insertData):
 #     groups= Meter1.select(Meter1.desc,Meter1.curInt.count(),Meter1.cur.count().alias('cc1')).group_by(Meter1.desc).all()
 #     for group in groups:

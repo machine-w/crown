@@ -36,12 +36,23 @@ Ordering = namedtuple('Ordering', ('param', 'asc'))
 R = namedtuple('R', ('value',))
 # Join = namedtuple('Join', ('model_class', 'join_type', 'on'))
 def out_alias(field,fun):
-        if field._alias:
-            name = field._alias
-            field._alias = None
-            return fun(field).alias(name)
-        else:
-            return fun(field)
+    if field._alias:
+        name = field._alias
+        field._alias = None
+        return fun(field).alias(name)
+    else:
+        return fun(field)
+
+def out_alias_tuple_field(field,n,fun):
+    if not hasattr(field, '__len__'):
+        raise Exception('field is not a tuple or list')
+    if len(field) < n-1:
+        raise Exception('field param less than %i' % (n-1))
+    if len(field) == n:
+        name = field[n-1]
+        return fun(*field[:n-1]).alias(name)
+    else:
+        return fun(*field[:n-1])
 
 def dict_update(orig, extra):
     new = {}

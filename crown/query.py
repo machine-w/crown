@@ -614,7 +614,7 @@ class SelectQuery(Query):
         # TODO: 分组的情况下如何统计
         if self._group_by:
             clone._group_by = None
-        clone._select = [fn.APERCENTILE(field[0],field[1]) for field in fields]
+        clone._select = [out_alias_tuple_field(field,3,fn.APERCENTILE) for field in fields]
         res = clone.execute()
         if len(res) > 0:
             return res[0]
@@ -626,7 +626,7 @@ class SelectQuery(Query):
         # TODO: 分组的情况下如何统计
         if self._group_by:
             clone._group_by = None
-        clone._select = [fn.PERCENTILE(field[0],field[1]) for field in fields]
+        clone._select = [out_alias_tuple_field(field,3,fn.PERCENTILE) for field in fields]
         res = clone.execute()
         if len(res) > 0:
             return res[0]
@@ -638,7 +638,7 @@ class SelectQuery(Query):
         # TODO: 分组的情况下如何统计
         if self._group_by:
             clone._group_by = None
-        clone._select = [fn.LEASTSQUARES(field[0],field[1],field[2]) for field in fields]
+        clone._select = [out_alias_tuple_field(field,4,fn.LEASTSQUARES) for field in fields]
         res = clone.execute()
         if len(res) > 0:
             return res[0]
