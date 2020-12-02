@@ -200,6 +200,29 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
     for res in res_all:
         print(res.desc,res.curDouble,res.curInt,res.cur,res.ts)
 
+虽然TDengine提供了很多聚合和统计函数，但是把时序数据导入numpy或pandas等数据分析组件中进行处理的情况也是很常见的操作。
+下面介绍如何通过crown把结果数据导入numpy和pandas
+
+读取数据到numpy：
+
+.. code-block:: python
+
+    #通过all_raw函数可以获取二维数组格式的数据查询结果。结果每列代表的标题保存在结果对象的head属性中。
+    raw_results = Meter1.select(Meter1.cur,Meter1.curInt,Meter1.curDouble).all_raw()
+    #可以很方便的将结果转换为numpy数组对象
+    np_data = np.array(raw_results)
+    print(np_data)
+    print(raw_results.head)
+
+读取数据到pandas：
+
+.. code-block:: python
+
+    raw_results = Meter1.select().all_raw()
+    #使用以下方法，可以轻松的将数据导入pandas,并且使用时间点作为index,使用返回的数据标题作为列名。
+    pd_data = pd.DataFrame(raw_results,columns=raw_results.head).set_index('ts')
+    print(pd_data)
+
 选择列四则运算：
 
 .. code-block:: python
