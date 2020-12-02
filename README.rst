@@ -285,6 +285,7 @@ where查询条件：
 group_by分组查询：
 
 .. code-block:: python
+
     # 可以在链式调用中加入group_by函数指定要分组的字段。然后在select函数中指定要分组统计的聚合函数（支持的聚合函数有：count、avg、sum 、stddev、leastsquares、percentile、min、max、first、last）
     groups= Meter1.select(Meter1.desc,Meter1.curInt.avg().alias('intavg'),Meter1.cur.count().alias('curcount')).group_by(Meter1.desc).all()
     for group in groups:
@@ -296,6 +297,14 @@ group_by分组查询：
         if group.desc == 'g2':
             assert group.intavg == 10.5
             assert group.curcount == 20
+
+时间维度聚合interval:
+
+.. code-block:: python
+    # 可以使用interval函数调用TDengine时间纬度聚合功能,使用方法如下 时间间隔与offset参数参考TDengine文档（s:秒，m:分钟，h:小时）。fill参数可选字符串(NONE | PREV | NULL | LINEAR)或者任意数值,例如：fill(1.2)将会以固定值填充。
+    results= Meter1.select(Meter1.cur.avg().alias('aa'),Meter1.cur.first().alias('bb')).where(Meter1.ts > (datetime.datetime.now()-datetime.timedelta(days=1))).interval('10s',fill='PREV',offset='1m').all()
+    for result in results:
+        print(result.aa,result.bb)
 
 join查询：
 
