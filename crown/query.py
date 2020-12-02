@@ -573,6 +573,7 @@ class SelectQuery(Query):
             return res[0]
         else:
             return None
+    # tdengine目前只支持一列，为以后支持多列准备的函数
     def diff(self,*fields):
         clone = self.order_by()
         clone._limit = clone._offset = None
@@ -582,22 +583,29 @@ class SelectQuery(Query):
         clone._select = [out_alias(field,fn.DIFF) for field in fields]
         res = clone.execute()
         return res
-    def top(self,field,top=1):
+    def top(self,field,top=1,alias=None):
         clone = self.order_by()
         clone._limit = clone._offset = None
         # TODO: 分组的情况下如何统计
         if self._group_by:
             clone._group_by = None
-        clone._select = [fn.TOP(field,top)]
+        if alias:
+            clone._select = [fn.TOP(field,top).alias(alias)]
+        else:
+            clone._select = [fn.TOP(field,top)]
         res = clone.execute()
         return res
-    def bottom(self,field,bottom=1):
+    def bottom(self,field,bottom=1,alias=None):
         clone = self.order_by()
         clone._limit = clone._offset = None
         # TODO: 分组的情况下如何统计
         if self._group_by:
             clone._group_by = None
-        clone._select = [fn.BOTTOM(field,bottom)]
+        if alias:
+            clone._select = [fn.BOTTOM(field,bottom).alias(alias)]
+        else:
+            clone._select = [fn.BOTTOM(field,bottom)]
+        
         res = clone.execute()
         return res
     def apercentile(self,*fields):

@@ -277,10 +277,10 @@ def test_Meter1_last_row(insertData):
         assert last_row1.aa == 10.05
 
 def test_Meter1_spread(insertData):
-    spread1 = Meter1.select().spread(Meter1.cur,Meter1.curDouble.alias('aa'))
+    spread1 = Meter1.select().spread(Meter1.curInt,Meter1.curDouble.alias('aa'))
     assert spread1
     if spread1:
-        assert spread1.get(Meter1.cur.spread()) == 0.949999999
+        assert spread1.get(Meter1.curInt.spread()) == 19.0
         assert spread1.aa == 0.95
 
 def test_Meter1_diff(insertData):
@@ -288,6 +288,21 @@ def test_Meter1_diff(insertData):
     diffs = Meter1.select().diff(Meter1.curInt.alias('aa'))
     for diff1 in diffs:
         assert diff1.aa in [1,-8,9]
+        assert diff1.ts<=datetime.datetime.now()
+def test_Meter1_top(insertData):
+    tops = Meter1.select().top(Meter1.cur,3,alias='aa')
+    assert len(tops) == 3
+    for top1 in tops:
+        assert top1.aa in [0.5,1.0]
+        assert top1.cur == None
+        assert top1.ts<=datetime.datetime.now()
+def test_Meter1_bottom(insertData):
+    bottoms = Meter1.select().bottom(Meter1.cur,3,alias='aa')
+    assert len(bottoms) == 3
+    for bottom1 in bottoms:
+        assert bottom1.aa in [0.05556,0.05263,0.05]
+        assert bottom1.cur == None
+        assert bottom1.ts<=datetime.datetime.now()
 # def test_Meter1_groupby(insertData):
 #     groups= Meter1.select(Meter1.desc,Meter1.curInt.count(),Meter1.cur.count().alias('cc1')).group_by(Meter1.desc).all()
 #     for group in groups:

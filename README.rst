@@ -262,7 +262,15 @@ where查询条件：
     #diff
     diffs = Meter1.select().diff(Meter1.curInt.alias('aa')) #diff目前只可以聚合一个属性。
     for diff1 in diffs:
-        print(diff1.aa)
+        print(diff1.aa,diff1.ts) # 时间点数据同时返回
+
+    #top(bottom函数使用方式相同)
+    tops = Meter1.select().top(Meter1.cur,3,alias='aa') # top函数需要提供要统计的属性，行数，以及别名
+    for top1 in tops:
+        print(top1.aa,top1.ts) # 时间点数据同时返回
+    tops = Meter1.select().top(Meter1.cur,3) # 可以不指定别名
+    for top1 in tops:
+        print(top1.get(Meter1.cur.top(3))) #不指定别名，需用使用get方法获取属性
 
 
 
