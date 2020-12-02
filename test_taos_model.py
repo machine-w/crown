@@ -360,8 +360,8 @@ def test_Meter1_groupby(insertData):
 
 
 # TODO: invalid SQL: start(end) time of query range required or time range too large
-def test_Meter1_interval(insertData):
-    results= Meter1.select(Meter1.cur.avg().alias('aa'),Meter1.cur.first().alias('bb')).where(Meter1.ts > (datetime.datetime.now()-datetime.timedelta(days=1))).interval('10s',fill=1.2).all()
-    for result in results:
-        print(result.aa,result.bb)
-    assert True
+# def test_Meter1_interval(insertData):
+#     results= Meter1.select(Meter1.cur.avg().alias('aa'),Meter1.cur.first().alias('bb')).where(Meter1.ts > (datetime.datetime.now()-datetime.timedelta(days=1))).interval('10s',fill=1.2).all()
+#     for result in results:
+#         print(result.aa,result.bb)
+#     assert True
