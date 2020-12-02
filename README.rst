@@ -282,7 +282,24 @@ where查询条件：
     print(leastsquares1.aa) # 结果： {slop:-0.001595, intercept:0.212111}
     print(leastsquares1.get(Meter1.curDouble.leastsquares(2,2))) #不指定别名，需用使用get方法获取属性
 
+group_by分组查询：
 
+.. code-block:: python
+    # 可以在链式调用中加入group_by函数指定要分组的字段。然后在select函数中指定要分组统计的聚合函数（支持的聚合函数有：count、avg、sum 、stddev、leastsquares、percentile、min、max、first、last）
+    groups= Meter1.select(Meter1.desc,Meter1.curInt.avg().alias('intavg'),Meter1.cur.count().alias('curcount')).group_by(Meter1.desc).all()
+    for group in groups:
+        print(group.desc)
+        if group.desc == 'g1':
+            # assert group.get(Meter1.curInt.count()) == 10
+            assert group.intavg == 5.5
+            assert group.curcount == 10
+        if group.desc == 'g2':
+            assert group.intavg == 10.5
+            assert group.curcount == 20
+
+join查询：
+
+目前并支持多表join查询，需要多表查询的情况请使用raw_sql函数，执行原始sql语句。以后的版本会补充此功能。
 
 超级表定义：
 

@@ -345,14 +345,18 @@ def test_Meter1_leastsquares(insertData):
         leastsquares1 = Meter1.select().leastsquares(Meter1.cur)
     except Exception as e:
         assert str(e) == 'field is not a tuple or list'
-# def test_Meter1_groupby(insertData):
-#     groups= Meter1.select(Meter1.desc,Meter1.curInt.count(),Meter1.cur.count().alias('cc1')).group_by(Meter1.desc).all()
-#     for group in groups:
-#         # print(group.desc)
-#         if group.desc == 'g1':
-#             assert group.get(Meter1.curInt.count()) == 10
-#         if group.desc == 'g2':
-#             assert group.cc1 == 20
+
+def test_Meter1_groupby(insertData):
+    groups= Meter1.select(Meter1.desc,Meter1.curInt.avg().alias('intavg'),Meter1.cur.count().alias('curcount')).group_by(Meter1.desc).all()
+    for group in groups:
+        print(group.desc)
+        if group.desc == 'g1':
+            # assert group.get(Meter1.curInt.count()) == 10
+            assert group.intavg == 5.5
+            assert group.curcount == 10
+        if group.desc == 'g2':
+            assert group.intavg == 10.5
+            assert group.curcount == 20
 
 
 # TODO: invalid SQL: start(end) time of query range required or time range too large
