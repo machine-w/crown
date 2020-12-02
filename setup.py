@@ -16,7 +16,7 @@ setup(
     install_requires=[
         'requests>=2.23.0'
     ],
-    version='0.0.6',
+    version='0.0.7',
     url='https://github.com/machine-w/crown',
     author='machine-w',
     author_email='steve2008.ma@gmail.com',
@@ -24,7 +24,9 @@ setup(
     tests_require=[
         'pytest',
         'pytest-faker',
-        'pytest-sugar'
+        'pytest-sugar',
+        'numpy',
+        'pandas'
     ],
     package_data={
         # include json and txt files

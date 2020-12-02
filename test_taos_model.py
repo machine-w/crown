@@ -2,9 +2,12 @@ import pytest
 from faker.generator import Generator
 from crown import *
 import datetime
+import numpy as np
+import pandas as pd
 DATABASENAME = 'taos_test'
 HOST = 'localhost'
-db = TdEngineDatabase(DATABASENAME,host=HOST,user="root",passwd="taosdata")
+HOST = '121.36.56.117'
+db = TdEngineDatabase(DATABASENAME,host=HOST,user="root",passwd="msl110918")
 class AllField(Model):
         name_float = FloatField(column_name='nf1')
         name_double = DoubleField()
@@ -358,10 +361,22 @@ def test_Meter1_groupby(insertData):
             assert group.intavg == 10.5
             assert group.curcount == 20
 
-
 # TODO: invalid SQL: start(end) time of query range required or time range too large
 # def test_Meter1_interval(insertData):
 #     results= Meter1.select(Meter1.cur.avg().alias('aa'),Meter1.cur.first().alias('bb')).where(Meter1.ts > (datetime.datetime.now()-datetime.timedelta(days=1))).interval('10s',fill=1.2).all()
 #     for result in results:
 #         print(result.aa,result.bb)
 #     assert True
+
+def test_raw_sql_numpy(insertData):
+    raw_results = Meter1.select(Meter1.cur,Meter1.curInt,Meter1.curDouble).all_raw()
+    np_data = np.array(raw_results)
+    print(np_data)
+    assert np_data.shape == (30,3)
+
+def test_raw_sql_pandas(insertData):
+    raw_results = Meter1.select().all_raw()
+    pd_data = pd.DataFrame(raw_results,columns=raw_results.head).set_index('ts')
+    print(pd_data)
+    print(pd_data.index)
+    assert pd_data.shape == (30,4)
