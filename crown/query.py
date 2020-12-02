@@ -420,7 +420,10 @@ class SelectQuery(Query):
     def interval(self, interval_value, fill='NONE',offset = None,):
         self._interval= interval_value
         self._interval_offset= offset
-        self._fill = fill #{NONE | VALUE | PREV | NULL | LINEAR}
+        if fill in ['NONE','PREV','NULL','LINEAR']:
+            self._fill = fill #{NONE | | PREV | NULL | LINEAR}
+        else:
+            self._fill = "VALUE, %s" % str(fill) #VALUE
 
     @returns_clone
     def paginate(self, page, paginate_by=20):
