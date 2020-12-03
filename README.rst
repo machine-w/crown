@@ -7,6 +7,7 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
 * 在tdengine 2.0.8版本测试通过
 * 解决mac操作系统下没有原生python连接器的问题
 * 极大的降低了python程序员使用TDengine技术门槛
+* 可以方便的将数据转换到numpy与pandas
 * 目前使用TDengine的restful接口连接数据库，以后将提供原生接口引擎可供选择（目前原生接口无法在mac系统上使用）
 
 安装
