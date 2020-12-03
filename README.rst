@@ -5,8 +5,9 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
 
 * 需要python 3.0版本以上
 * 在tdengine 2.0.8版本测试通过
-* 旨在解决mac操作系统下目前没有原生python连接器的问题，也为更加方便的使用tdengine数据库。
-* 目前使用TDengine的restful接口连接数据库，以后将提供原生接口引擎可供选择（目前原生接口无法在mac系统上使用）。
+* 解决mac操作系统下没有原生python连接器的问题
+* 极大的降低了python程序员使用TDengine技术门槛
+* 目前使用TDengine的restful接口连接数据库，以后将提供原生接口引擎可供选择（目前原生接口无法在mac系统上使用）
 
 安装
 ----------------------
@@ -248,6 +249,17 @@ where查询条件：
     ress = Meter1.select().where(Meter1.cur > 0 or Meter1.desc % 'g%').all()
     #where函数可以接收任意多参数，每个参数为一个限定条件，参数条件之间为"与"的关系。
     ress = Meter1.select().where(Meter1.cur > 0, Meter1.ts > one_time, Meter1.desc % '%1').all()
+
+分页与limit：
+
+.. code-block:: python
+
+    #可以在select函数后链式调用paginate函数进行分页操作，以下例子为取第6页 每页5条数据。
+    ress_1 = Meter1.select().paginate(6,page_size=5).all()
+    ress_2 = Meter1.select().paginate(6).all() #默认page_size为20
+    #可以在select函数后链式调用limit函数和offset函数条数限制和定位操作。
+    ress_3 = Meter1.select().limit(2).offset(5).all()
+    ress_4 = Meter1.select().limit(2).all()
 
 排序（目前tdengine只支持主键排序）：
 

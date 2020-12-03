@@ -426,11 +426,11 @@ class SelectQuery(Query):
             self._fill = "VALUE, %s" % str(fill) #VALUE
 
     @returns_clone
-    def paginate(self, page, paginate_by=20):
+    def paginate(self, page, page_size=20):
         if page > 0:
             page -= 1
-        self._limit = paginate_by
-        self._offset = page * paginate_by
+        self._limit = page_size
+        self._offset = page * page_size
 
     def count(self,field=None):
         clone = self.order_by()

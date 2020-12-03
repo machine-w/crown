@@ -6,8 +6,7 @@ import numpy as np
 import pandas as pd
 DATABASENAME = 'taos_test'
 HOST = 'localhost'
-HOST = '121.36.56.117'
-db = TdEngineDatabase(DATABASENAME,host=HOST,user="root",passwd="msl110918")
+db = TdEngineDatabase(DATABASENAME,host=HOST,user="root",passwd="taosdata")
 class AllField(Model):
         name_float = FloatField(column_name='nf1')
         name_double = DoubleField()
@@ -201,6 +200,23 @@ def test_Meter1_select_where(insertData):
         assert isinstance(res.curInt,int)
         assert isinstance(res.cur,float)
         assert res.ts<=datetime.datetime.now()
+
+def test_Meter1_select_paginate(insertData):
+    ress_1 = Meter1.select().paginate(1,page_size=5).all()
+    ress_2 = Meter1.select().paginate(2,page_size=5).all()
+    assert len(ress_1) == 5 and len(ress_2) == 5
+    for i in range(5):
+        assert ress_1[i].ts < ress_2[i].ts
+
+def test_Meter1_select_limit(insertData):
+    ress_1 = Meter1.select().limit(2).offset(5).all()
+    assert len(ress_1) == 2
+    assert ress_1[0].curInt ==6
+    assert ress_1[1].curInt ==7
+    ress_1 = Meter1.select().limit(2).all()
+    assert len(ress_1) == 2
+    assert ress_1[0].curInt ==1
+    assert ress_1[1].curInt ==2
 
 def test_Meter1_select_one_desc(insertData):
     res = Meter1.select().desc().one()
