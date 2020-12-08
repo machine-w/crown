@@ -161,6 +161,43 @@ class Model(metaclass=BaseModel):
         resModel.create_table(safe=safe)
         return resModel
     @classmethod
+    def model_from_table(cls,table_name,database=default_database):
+        if table_name in database.get_tables():
+            fields = {}
+            fields['Meta']= type('Meta', (object,), dict(database = database,db_table=table_name))
+            desc_fields = database.describe_table_name(table_name)
+            for i,f in enumerate(desc_fields):
+                if f[3] != 'TAG':
+                    val = None
+                    if f[1] == 'TIMESTAMP':
+                        val = PrimaryKeyField(column_name=f[0]) if i == 0 else DateTimeField(column_name=f[0])
+                    elif f[1] == 'FLOAT':
+                        val = FloatField(column_name=f[0])
+                    elif f[1] == 'DOUBLE':
+                        val = DoubleField(column_name=f[0])
+                    elif f[1] == 'INT':
+                        val = IntegerField(column_name=f[0])
+                    elif f[1] == 'BIGINT':
+                        val = BigIntegerField(column_name=f[0])
+                    elif f[1] == 'SMALLINT':
+                        val = SmallIntegerField(column_name=f[0])
+                    elif f[1] == 'TINYINT':
+                        val = TinyIntegerField(column_name=f[0])
+                    elif f[1] == 'NCHAR':
+                        val = NCharField(column_name=f[0],max_length=f[2])
+                    elif f[1] == 'BINARY':
+                        val = BinaryField(column_name=f[0],max_length=f[2])
+                    elif f[1] == 'BOOL':
+                        val = BooleanField(column_name=f[0])
+                    else:
+                        raise Exception('have unknow field')
+                    fields[f[0]] = val
+            resModel = type(table_name, (cls,), fields)
+            return resModel
+        else:
+            return None
+        
+    @classmethod
     def drop_table(cls,safe=True):
         return cls._meta.database.drop_table(cls,safe)
     @classmethod
@@ -168,7 +205,7 @@ class Model(metaclass=BaseModel):
         return cls._meta.database.describe_table(cls)
     @classmethod
     def table_exists(cls):
-        return cls._meta.db_table[cls._meta.db_table.index('.')+1:]  in cls._meta.database.get_tables()
+        return cls._meta.db_table[cls._meta.db_table.index('.')+1:] in cls._meta.database.get_tables()
         # return cls._meta.db_table in ["%s.%s" % (cls._meta.database.database,x[0]) for x in cls._meta.database.get_tables()]
     @classmethod
     def select(cls, *selection):

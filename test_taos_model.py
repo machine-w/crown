@@ -8,7 +8,7 @@ DATABASENAME = 'taos_test'
 HOST = 'localhost'
 db = TdEngineDatabase(DATABASENAME,host=HOST,user="root",passwd="taosdata")
 class AllField(Model):
-        name_float = FloatField(column_name='nf1')
+        name_float = FloatField(db_column='nf1')
         name_double = DoubleField()
         name_bigint = BigIntegerField()
         name_int = IntegerField()
@@ -21,7 +21,7 @@ class AllField(Model):
         birthday = DateTimeField()
         class Meta:
             database = db
-            db_table = 'allfield'
+            db_table = 'allfield1'
 # test table
 class Meter1(Model):
         cur = FloatField(db_column='c1')
@@ -42,7 +42,17 @@ def test_create_drop_table():
     assert Meter1.drop_table()
     assert not Meter1.table_exists()
 def test_dynamic_create_table():
-    Meter_dynamic= Model.dynamic_create_table('meterD',db,test1 = FloatField(db_column='t1'),test2 = IntegerField(db_column='t2'))
+    Meter_dynamic= Model.dynamic_create_table('meterD',db,\
+                                            test1 = FloatField(db_column='t1'),\
+                                            test2 = IntegerField(db_column='t2'),\
+                                            test3 = DoubleField(),\
+                                            test4 = BigIntegerField(),\
+                                            test5 = SmallIntegerField(),\
+                                            test6 = TinyIntegerField(),\
+                                            test7 = NCharField(max_length=20),\
+                                            test8 = BinaryField(max_length=20),\
+                                            test9 = BooleanField()
+                                            )
     tabledes = Meter_dynamic.describe_table()
     print(tabledes)
     assert 'ts' in tabledes[0]
@@ -51,6 +61,39 @@ def test_dynamic_create_table():
     assert Meter_dynamic.table_exists()
     assert Meter_dynamic.drop_table()
     assert not Meter_dynamic.table_exists()
+def test_get_model_from_table():
+    assert AllField.create_table(safe=True)
+    assert AllField.table_exists()
+    Meter_dynamic= Model.model_from_table('allfield1',db)
+    tabledes = Meter_dynamic.describe_table()
+    print(tabledes)
+    m = Meter_dynamic(nf1 = 1.1,\
+        name_double = 1.2,\
+        name_bigint = 999999999,\
+        name_int = 1000,\
+        name_smallint = 100,\
+        name_tinyint = 1,\
+        n1 = "test",\
+        name_binary = "tes",\
+        name_bool = True,\
+        birthday = datetime.datetime.now()\
+    )
+    m.save()
+    m1=Meter_dynamic.select().one()
+    assert m1.nf1==1.1
+    assert m1.name_double==1.2
+    assert m1.name_bigint==999999999
+    assert m1.name_int==1000
+    assert m1.name_smallint==100
+    assert m1.name_tinyint==1
+    assert m1.n1=="test"
+    assert m1.name_binary=="tes"
+    assert m1.name_bool==True
+    assert m1.birthday<=datetime.datetime.now()
+    assert Meter_dynamic.drop_table()
+    assert not AllField.table_exists()
+
+
 def test_table_primary():
     class TestPri(Model):
         cur = FloatField(db_column='c1')

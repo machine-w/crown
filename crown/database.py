@@ -170,7 +170,8 @@ class Database(object):
     def describe_table(self, model_class):
         qc = self.get_compiler()
         return self.execute_sql(qc.describe_table(model_class))
-
+    def describe_table_name(self, table_name):
+        return self.execute_sql('DESCRIBE %s.%s' % (self.database,table_name),[])
     def raw_sql(self, sql, *params):
         return self.execute_sql(sql.replace("?", "{}"),params)
 class TdEngineDatabase(Database):
