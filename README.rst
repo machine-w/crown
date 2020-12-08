@@ -153,6 +153,19 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
     # db.drop_table(Meter1,safe=True) #通过数据库对象删表，功能同上
     Meter1.table_exists() #查看表是否存在，存在返回True,不存在返回：False
 
+动态建表：
+
+除了使用定义模型类的方式建表外，还提供了动态定义字段建表的功能。
+
+.. code-block:: python
+
+    #可以使用Model类的类方法dynamic_create_table方法动态建表，第一个参数为表名，然后需要指定数据库，与是否安全建表。
+    # 关键词参数可以任意多个，指定表中的字段。
+    Meter_dynamic= Model.dynamic_create_table('meterD',database=db,safe=True,test1 = FloatField(db_column='t1'),test2 = IntegerField(db_column='t2'))
+    # 函数返回的对象为Model类对象。使用方法与静态继承的模型类相同。
+    Meter_dynamic.table_exists()
+    Meter_dynamic.drop_table()
+
 插入数据：
 
 .. code-block:: python
@@ -373,6 +386,20 @@ join查询：
     Meters.drop_table(safe=True) #删表 safe：如果表不存在，则跳过删表指令。命令运行成功放回True,失败raise错误
     # db.drop_table(Meters,safe=True) #通过数据库对象删表，功能同上
     Meters.supertable_exists() #查看表是否存在，存在返回True,不存在返回：False
+
+超级表动态建表：
+
+超级表除了使用定义模型类的方式建表外，也提供了动态定义字段建表的功能。
+
+.. code-block:: python
+
+    #可以使用SuperModel类的类方法dynamic_create_table方法动态建表，第一个参数为表名，然后需要指定数据库，与是否安全建表
+    # 需要额外提供tags参数，参数值为一个字典(使用方法如下例)，设置超级表所有的标签。
+    # 关键词参数可以任意多个，指定表中的字段。
+    Meter_dynamic= SuperModel.dynamic_create_table('meterSD',database=db,safe=True,tags={'gid':IntegerField(db_column='tag1')},test1 = FloatField(db_column='t1'),test2 = IntegerField(db_column='t2'))
+    # 函数返回的对象为SuperModel类对象。使用方法与静态继承的模型类相同。
+    Meter_dynamic.supertable_exists()
+    Meter_dynamic.drop_table()
 
 从超级表建立子表：
 

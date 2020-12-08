@@ -44,6 +44,19 @@ def test_create_drop_stable():
     assert Meters.drop_table()
     assert not Meters.supertable_exists()
 
+def test_dynamic_create_stable():
+    Meter_dynamic= SuperModel.dynamic_create_table('meterSD',db,tags={'gid':IntegerField(db_column='tag1')},test1 = FloatField(db_column='t1'),test2 = IntegerField(db_column='t2'))
+    tabledes = Meter_dynamic.describe_table()
+    print(tabledes)
+    assert 'ts' in tabledes[0]
+    assert 't1' in tabledes[1]
+    assert 't2' in tabledes[2]
+    assert 'tag1' in tabledes[3]
+    assert 'TAG' in tabledes[3]
+    assert Meter_dynamic.supertable_exists()
+    assert Meter_dynamic.drop_table()
+    assert not Meter_dynamic.supertable_exists()
+
 def test_create_drop_sontable():
     son = Meters.create_son_table('d1',location='beijing',groupid=3)
     print(db.get_tables())

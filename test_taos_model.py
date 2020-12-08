@@ -41,6 +41,16 @@ def test_create_drop_table():
     assert Meter1.table_exists()
     assert Meter1.drop_table()
     assert not Meter1.table_exists()
+def test_dynamic_create_table():
+    Meter_dynamic= Model.dynamic_create_table('meterD',db,test1 = FloatField(db_column='t1'),test2 = IntegerField(db_column='t2'))
+    tabledes = Meter_dynamic.describe_table()
+    print(tabledes)
+    assert 'ts' in tabledes[0]
+    assert 't1' in tabledes[1]
+    assert 't2' in tabledes[2]
+    assert Meter_dynamic.table_exists()
+    assert Meter_dynamic.drop_table()
+    assert not Meter_dynamic.table_exists()
 def test_table_primary():
     class TestPri(Model):
         cur = FloatField(db_column='c1')

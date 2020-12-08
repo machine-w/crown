@@ -155,6 +155,12 @@ class Model(metaclass=BaseModel):
     def create_table(cls,safe=True):
         return cls._meta.database.create_table(cls,safe)
     @classmethod
+    def dynamic_create_table(cls,table_name,database=default_database,safe=True,**fields):
+        fields['Meta']= type('Meta', (object,), dict(database = database,db_table=table_name))
+        resModel = type(table_name, (cls,), fields)
+        resModel.create_table(safe=safe)
+        return resModel
+    @classmethod
     def drop_table(cls,safe=True):
         return cls._meta.database.drop_table(cls,safe)
     @classmethod
@@ -217,6 +223,15 @@ class SuperModel(metaclass=BaseModel):
     def create_table(cls,safe=True):
         return cls._meta.database.create_table(cls,safe)
     @classmethod
+    def dynamic_create_table(cls,table_name,database=default_database,safe=True,tags={},**fields):
+        attr = dict(database =  database,db_table=table_name)
+        attr.update(tags)
+        _meta= type('Meta', (object,), attr)
+        fields['Meta'] = _meta
+        resModel = type(table_name, (cls,), fields)
+        resModel.create_table(safe=safe)
+        return resModel
+    @classmethod
     def create_son_table(cls,name,**kwargs):
         cls._meta.database.create_table(cls,safe=True)
         tags =[]
@@ -237,6 +252,9 @@ class SuperModel(metaclass=BaseModel):
     @classmethod
     def drop_table(cls,safe=True):
         return cls._meta.database.drop_table(cls,safe)
+    @classmethod
+    def describe_table(cls):
+        return cls._meta.database.describe_table(cls)
     @classmethod
     def supertable_exists(cls):
         # tables = ["%s.%s" % (cls._meta.database.database,x[3]) for x in cls._meta.database.get_tables()]
