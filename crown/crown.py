@@ -318,6 +318,15 @@ class SuperModel(metaclass=BaseModel):
         # fdict = dict((cls._tags.fields[f], v) for f, v in tags.items())
         CreateSonTableQuery(cls, tags,name).execute()
         son_model = type(name, (cls,Model), dict())
+        #########################################fix custom primary bug
+        primary_column_name = cls._meta.primary_key.db_column
+        if primary_column_name != 'ts':
+            son_model._meta.primary_key = cls._meta.primary_key
+            son_model._meta.fields.pop('ts')
+            son_model._meta.columns.pop('ts')
+            son_model._meta.fields[primary_column_name] = cls._meta.fields[primary_column_name]
+            son_model._meta.columns[primary_column_name] = cls._meta.columns[primary_column_name]
+        #############################################
         for name in cls._tags.get_field_names():
             delattr(son_model,name)
             field = son_model._meta.fields[name]

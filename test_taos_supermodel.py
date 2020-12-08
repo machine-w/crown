@@ -7,20 +7,21 @@ db = TdEngineDatabase('taos_test',host=HOST)
 
 # test all field 
 class AllFields(SuperModel):
-        name_float = FloatField(column_name='n_float')
+        name_float = FloatField()
         name_double = DoubleField()
         name_bigint = BigIntegerField()
         name_int = IntegerField()
-        name_smallint = SmallIntegerField()
+        name_small = SmallIntegerField()
         name_tinyint = TinyIntegerField()
-        name_nchar = NCharField(max_length=59,)
+        name_nchar = NCharField(max_length=59)
         name_binary = BinaryField(max_length=3)
-        name_ = BooleanField()
-        dd = PrimaryKeyField()
+        name_bool = BooleanField()
+        # dd = PrimaryKeyField()
         birthday = DateTimeField()
         class Meta:
+            primary_key = 'dd'
             database = db
-            db_table = 'all_field'
+            db_table = 'all_field9'
             location = BinaryField(max_length=30)
             groupid = IntegerField(db_column='gid')
 AllField1 = AllFields.create_son_table('d3',location='beijing',groupid=3)
@@ -64,6 +65,36 @@ def test_create_drop_sontable():
     assert son.drop_table()
     assert not son.table_exists()
 
+def test_get_supermodel_from_table():
+    assert AllFields.create_table(safe=True)
+    assert AllFields.supertable_exists()
+    Meter_dynamic= SuperModel.supermodel_from_table('all_field9',db)
+    tabledes = Meter_dynamic.describe_table()
+    print(tabledes)
+    SonTable = Meter_dynamic.create_son_table('sontabledynamic6',location='beijing',gid=4)
+    m = SonTable(name_float = 1.1,\
+        name_double = 1.2,\
+        name_bigint = 999999999,\
+        name_int = 1000,\
+        name_small = 10,\
+        name_tinyint = 1,\
+        name_binary = "tes",\
+        name_bool = True,\
+        birthday = datetime.datetime.now()\
+    )
+    m.save()
+    m1=SonTable.select().one()
+    assert m1.name_float==1.1
+    assert m1.name_double==1.2
+    assert m1.name_bigint==999999999
+    assert m1.name_int==1000
+    assert m1.name_small==10
+    assert m1.name_tinyint==1
+    assert m1.name_binary=="tes"
+    assert m1.name_bool==True
+    assert m1.birthday<=datetime.datetime.now()
+    assert SonTable.drop_table()
+    assert not SonTable.table_exists()
 
 @pytest.fixture()
 def insertData():
