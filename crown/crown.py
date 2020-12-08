@@ -269,6 +269,45 @@ class SuperModel(metaclass=BaseModel):
         resModel.create_table(safe=safe)
         return resModel
     @classmethod
+    def supermodel_from_table(cls,table_name,database=default_database):
+        if table_name in database.get_supertables():
+            fields = {}
+            tags =dict(database = database,db_table=table_name)
+            desc_fields = database.describe_table_name(table_name)
+            for i,f in enumerate(desc_fields):
+                val = None
+                if f[1] == 'TIMESTAMP':
+                    val = PrimaryKeyField(column_name=f[0]) if i == 0 else DateTimeField(column_name=f[0])
+                elif f[1] == 'FLOAT':
+                    val = FloatField(column_name=f[0])
+                elif f[1] == 'DOUBLE':
+                    val = DoubleField(column_name=f[0])
+                elif f[1] == 'INT':
+                    val = IntegerField(column_name=f[0])
+                elif f[1] == 'BIGINT':
+                    val = BigIntegerField(column_name=f[0])
+                elif f[1] == 'SMALLINT':
+                    val = SmallIntegerField(column_name=f[0])
+                elif f[1] == 'TINYINT':
+                    val = TinyIntegerField(column_name=f[0])
+                elif f[1] == 'NCHAR':
+                    val = NCharField(column_name=f[0],max_length=f[2])
+                elif f[1] == 'BINARY':
+                    val = BinaryField(column_name=f[0],max_length=f[2])
+                elif f[1] == 'BOOL':
+                    val = BooleanField(column_name=f[0])
+                else:
+                    raise Exception('have unknow field')
+                if f[3] == 'TAG':
+                    tags[f[0]] = val
+                else:
+                    fields[f[0]] = val
+            fields['Meta']= type('Meta', (object,), tags)
+            resModel = type(table_name, (cls,), fields)
+            return resModel
+        else:
+            return None
+    @classmethod
     def create_son_table(cls,name,**kwargs):
         cls._meta.database.create_table(cls,safe=True)
         tags =[]
