@@ -187,7 +187,7 @@ def insertData():
     db.create_database(safe=True)
     Meter1.create_table(safe=True)
     for i in range(1,11):
-        m = Meter1(cur = 1/i,curInt=i,curDouble=1/i+10,desc='g1',ts= datetime.datetime.now() - datetime.timedelta(hours=(12-i)))
+        m = Meter1(cur = 1/i,curInt=None,curDouble=1/i+10,desc=None,ts= datetime.datetime.now() - datetime.timedelta(hours=(12-i)))
         m.save()
     for i in range(1,21):
         m = Meter1(cur = 1/i,curInt=i,curDouble=1/i+10,desc='g2',ts= datetime.datetime.now() - datetime.timedelta(hours=(21-i)))
@@ -214,15 +214,15 @@ def test_Meter1_select_all(insertData):
     ress = Meter1.select().all()
     assert len(ress) == 30
     for res in ress:
-        assert res.desc == 'g2' or res.desc == 'g1'
+        assert res.desc == 'g2' or res.desc == 'g1' or res.desc ==  None
         assert isinstance(res.curDouble,float)
-        assert isinstance(res.curInt,int)
+        assert isinstance(res.curInt,int) or res.curInt is None
         assert isinstance(res.cur,float)
         assert res.ts<=datetime.datetime.now()
     ress = Meter1.select(Meter1.cur,Meter1.desc).all()
     assert len(ress) == 30
     for res in ress:
-        assert res.desc == 'g2' or res.desc == 'g1'
+        assert res.desc == 'g2' or res.desc == 'g1' or res.desc == None
         assert res.curDouble == None
         assert res.curInt == None
         assert isinstance(res.cur,float)
@@ -245,8 +245,8 @@ def test_Meter1_select_operation(insertData):
         assert res.ts<=datetime.datetime.now()
 
 def test_Meter1_select_where(insertData):
-    ress = Meter1.select().where(Meter1.cur > 0,Meter1.ts > datetime.datetime.now() - datetime.timedelta(hours=10),Meter1.desc % '%1').all()
-    assert len(ress) == 8
+    ress = Meter1.select().where(Meter1.cur > 0,Meter1.ts > datetime.datetime.now() - datetime.timedelta(hours=10),Meter1.desc % '%2').all()
+    assert len(ress) == 9
     for res in ress:
         assert res.desc == 'g2' or res.desc == 'g1'
         assert isinstance(res.curDouble,float)

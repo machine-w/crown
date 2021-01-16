@@ -166,9 +166,10 @@ class Field(Leaf):
         return value
 
     def db_value(self, value):
-        return value if value is None else self.coerce(value)
-
+        return 'null' if value is None else self.coerce(value)
     def python_value(self, value):
+        if value == 'null':
+            return None
         return value if value is None else self.coerce(value)
     def count(self):
         return fn.COUNT(self)
