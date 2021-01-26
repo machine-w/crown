@@ -172,6 +172,18 @@ class Database(object):
         return self.execute_sql(qc.describe_table(model_class))
     def describe_table_name(self, table_name):
         return self.execute_sql('DESCRIBE %s.%s' % (self.database,table_name),[])
+    def change_table_tagvalue(self, model_class,name,value):
+        qc = self.get_compiler()
+        return self.execute_sql(qc.change_table_tagvalue(model_class,name,value))
+    def add_tag(self, model_class,value):
+        qc = self.get_compiler()
+        return self.execute_sql(qc.add_tag(model_class,value))
+    def drop_tag(self, model_class,name):
+        qc = self.get_compiler()
+        return self.execute_sql(qc.drop_tag(model_class,name))
+    def change_tag_name(self, model_class,name,newname):
+        qc = self.get_compiler()
+        return self.execute_sql(qc.change_tag_name(model_class,name,newname))
     def raw_sql(self, sql, *params):
         return self.execute_sql(sql.replace("?", "{}"),params)
 class TdEngineDatabase(Database):

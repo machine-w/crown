@@ -201,6 +201,14 @@ class Model(metaclass=BaseModel):
     def drop_table(cls,safe=True):
         return cls._meta.database.drop_table(cls,safe)
     @classmethod
+    def change_tag_value(cls,**kwargs):
+        res = None
+        for name,value in kwargs.items():
+            res = cls._meta.database.change_table_tagvalue(cls,name,value)
+            if res == None:
+                return res
+        return res
+    @classmethod
     def describe_table(cls):
         return cls._meta.database.describe_table(cls)
     @classmethod
@@ -247,7 +255,12 @@ class Model(metaclass=BaseModel):
                 query_str = query_bracket[0].lower()
             else:
                 query_str = queryori.lower()
-            return getattr(self,query_str) if hasattr(self,query_str) else None
+            if hasattr(self,query_str):
+                return getattr(self,query_str)
+            elif hasattr(self,'('+query_str+')'):
+                return getattr(self,'('+query_str+')')
+            else:
+                return None
         else:
             return None
 class SuperModel(metaclass=BaseModel):
@@ -340,6 +353,22 @@ class SuperModel(metaclass=BaseModel):
     @classmethod
     def describe_table(cls):
         return cls._meta.database.describe_table(cls)
+    @classmethod
+    def add_tags(cls,*args):
+        res = None
+        for value in args:
+            if isinstance(value, Field) and not isinstance(value, DateTimeField) and value.db_column:
+                res = cls._meta.database.add_tag(cls,value)
+                cls.describe_table() # TODO: 连续添加标签会报错。加入一条命令缓冲，以后要删掉
+                if res == None:
+                    return res
+        return res
+    @classmethod
+    def drop_tag(cls,name):
+        return cls._meta.database.drop_tag(cls,name)
+    @classmethod
+    def change_tag_name(cls,name,newname):
+        return cls._meta.database.change_tag_name(cls,name,newname)
     @classmethod
     def supertable_exists(cls):
         # tables = ["%s.%s" % (cls._meta.database.database,x[3]) for x in cls._meta.database.get_tables()]

@@ -4,9 +4,16 @@ from crown import *
 import datetime
 import numpy as np
 import pandas as pd
+import logging
+# DATABASENAME = 'taos_test'
+# HOST = 'localhost'
+# db = TdEngineDatabase(DATABASENAME,host=HOST,user="root",passwd="taosdata")
+logger.setLevel(logging.DEBUG)
 DATABASENAME = 'taos_test'
-HOST = 'localhost'
-db = TdEngineDatabase(DATABASENAME,host=HOST,user="root",passwd="taosdata")
+HOST = '121.36.56.117'
+PORT = 6041
+# 默认端口 6041，默认用户名：root,默认密码：taosdata
+db = TdEngineDatabase(DATABASENAME,host=HOST)
 class AllField(Model):
         name_float = FloatField(db_column='nf1')
         name_double = DoubleField()
@@ -197,16 +204,17 @@ def insertData():
 
     Meter1.drop_table()
 def test_Meter1_select_one(insertData):
+    logger.setLevel(logging.DEBUG)
     res = Meter1.select().one()
     assert res.desc == 'g2'
     assert res.curDouble == 11.0
     assert res.curInt == 1
     assert res.cur == 1
     assert res.ts<=datetime.datetime.now()
-    res = Meter1.select(Meter1.cur,Meter1.desc).one()
+    res = Meter1.select(Meter1.cur,Meter1.desc,'curDouble','c2').one()
     assert res.desc == 'g2'
-    assert res.curDouble == None
-    assert res.curInt == None
+    assert res.curDouble == 11.0
+    assert res.curInt == 1
     assert res.cur == 1
     assert res.ts == None
 
@@ -240,6 +248,7 @@ def test_Meter1_select_operation(insertData):
     ress = Meter1.select((Meter1.curDouble+Meter1.cur),Meter1.ts).all()
     assert len(ress) == 30
     for res in ress:
+        # print(res.get(Meter1.curDouble+Meter1.cur))
         assert isinstance(res.get(Meter1.curDouble+Meter1.cur),float)
         # assert res.bb == 1.1
         assert res.ts<=datetime.datetime.now()
@@ -392,7 +401,7 @@ def test_Meter1_apercentile(insertData):
 
 def test_Meter1_percentile(insertData):
     percentile1 = Meter1.select().percentile((Meter1.cur,1,'aa'),(Meter1.curDouble,2))
-    assert percentile1.aa == 0.0
+    assert percentile1.aa > 0.0
     assert percentile1.cur == None
     # assert percentile1.bb == 10.051526316
     assert percentile1.get(Meter1.curDouble.percentile(2)) == 10.051526316
