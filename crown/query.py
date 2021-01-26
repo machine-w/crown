@@ -362,7 +362,7 @@ class SelectQuery(Query):
         all_selection=model_class._meta.get_fields()
         if model_class._tags:
             all_selection.extend(model_class._tags.get_fields())
-        self._select = self._model_shorthand(selection or all_selection)
+        self._select = self._model_shorthand(self.strToField(selection , all_selection))
         self._group_by = None
         self._order_by = None
         self._limit = None
@@ -372,6 +372,19 @@ class SelectQuery(Query):
         self._interval_offset= None
         self._fill = None
         super(SelectQuery, self).__init__(model_class)
+    
+    def strToField(self,selection,all_selection):
+        if not selection:
+            return all_selection
+        res = []
+        for item in selection:
+            if isinstance(item,str):
+                for field in all_selection:
+                    if item.capitalize() == field.verbose_name or item == field.db_column:
+                        item = field
+                        break
+            res.append(item)
+        return res
 
     def clone(self):
         query = super(SelectQuery, self).clone()
