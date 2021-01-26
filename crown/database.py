@@ -101,7 +101,7 @@ class Database(object):
         if res:
             if require_commit:
                 self.commit()
-            logger.debug(cursor,cursor.head)
+            # logger.debug(cursor.head,str(cursor.rows))
             return cursor
         return None
 
