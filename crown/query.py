@@ -293,7 +293,8 @@ class QueryCompiler(object):
         return ' '.join(parts)
     def change_table_tagvalue(self,model_class,name,value):
         parts = ['ALTER TABLE ']
-        parts.append(self.quote(model_class._meta.db_table))
+        parts.append(model_class._meta.db_table) #TODO：restful api 对引号的表名支持不好
+        # parts.append(self.quote(model_class._meta.db_table))
         if isinstance(value,str):
             parts.append('SET TAG "%s" = "%s"' % (name,value))
         else:
@@ -301,18 +302,21 @@ class QueryCompiler(object):
         return ' '.join(parts)
     def add_tag(self,model_class,value):
         parts = ['ALTER TABLE ']
-        parts.append(self.quote(model_class._meta.db_table))
+        parts.append(model_class._meta.db_table) #TODO：restful api 对引号的表名支持不好
+        # parts.append(self.quote(model_class._meta.db_table))
         if isinstance(value, Field) and not isinstance(value, DateTimeField) and value.db_column:
             parts.append('ADD TAG %s' % (self.field_sql(value)))
         return ' '.join(parts)
     def drop_tag(self,model_class,name):
         parts = ['ALTER TABLE ']
-        parts.append(self.quote(model_class._meta.db_table))
+        parts.append(model_class._meta.db_table) #TODO：restful api 对引号的表名支持不好
+        # parts.append(self.quote(model_class._meta.db_table))
         parts.append('DROP TAG %s' % (name))
         return ' '.join(parts)
     def change_tag_name(self,model_class,name,newname):
         parts = ['ALTER TABLE ']
-        parts.append(self.quote(model_class._meta.db_table))
+        parts.append(model_class._meta.db_table) #TODO：restful api 对引号的表名支持不好
+        # parts.append(self.quote(model_class._meta.db_table))
         parts.append('CHANGE TAG %s %s' % (name,newname))
         return ' '.join(parts)
     def drop_table(self, model_class, fail_silently=False, cascade=False):

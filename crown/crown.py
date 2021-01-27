@@ -359,7 +359,6 @@ class SuperModel(metaclass=BaseModel):
         for value in args:
             if isinstance(value, Field) and not isinstance(value, DateTimeField) and value.db_column:
                 res = cls._meta.database.add_tag(cls,value)
-                cls.describe_table() # TODO: 连续添加标签会报错。加入一条命令缓冲，以后要删掉
                 if res == None:
                     return res
         return res
