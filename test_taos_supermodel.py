@@ -6,11 +6,11 @@ import logging
 # HOST = 'localhost'
 # db = TdEngineDatabase(DATABASENAME,host=HOST,user="root",passwd="taosdata")
 logger.setLevel(logging.DEBUG)
-DATABASENAME = 'taos_test'
+DATABASENAME = 'taos_tests'
 HOST = '121.36.56.117'
 PORT = 6041
 # 默认端口 6041，默认用户名：root,默认密码：taosdata
-db = TdEngineDatabase(DATABASENAME,host=HOST,user='root',passwd='taosdata')
+db = TdEngineDatabase(DATABASENAME,host=HOST,user='root',passwd="taosdata")
 
 # test all field 
 class AllFields(SuperModel):
@@ -178,14 +178,22 @@ def test_add_tag(insertData):
     assert 'add_tag_1' in tags
     assert 'add_tag_4' in tags
     assert 'add_tag_5' in tags
+    assert 'add_tag_1' in Meters._meta.__dict__
+    assert 'add_tag_4' in Meters._meta.__dict__
+    assert 'add_tag_5' in Meters._meta.__dict__
+    # print(Meters._meta.__dict__)
 
     Meters.change_tag_name('add_tag_1','add_tag_2')
+    print(Meters._meta.__dict__)
+
     tags = []
     for line in Meters.describe_table():
         if line[3] == 'TAG':
             tags.append(line[0])
     assert 'add_tag_1' not in tags
     assert 'add_tag_2' in tags
+    assert 'add_tag_1' in Meters._meta.__dict__
+    assert 'add_tag_2' == Meters._meta.__dict__['add_tag_1'].db_column
 
     Meters.drop_tag('add_tag_2')
     tags = []
@@ -193,6 +201,7 @@ def test_add_tag(insertData):
         if line[3] == 'TAG':
             tags.append(line[0])
     assert 'add_tag_2' not in tags
+    assert 'add_tag_2' not in Meters._meta.__dict__
 
 
 

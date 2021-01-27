@@ -13,7 +13,7 @@ DATABASENAME = 'taos_test'
 HOST = '121.36.56.117'
 PORT = 6041
 # 默认端口 6041，默认用户名：root,默认密码：taosdata
-db = TdEngineDatabase(DATABASENAME,host=HOST)
+db = TdEngineDatabase(DATABASENAME,host=HOST,passwd="taosdata")
 class AllField(Model):
         name_float = FloatField(db_column='nf1')
         name_double = DoubleField()

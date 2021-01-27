@@ -361,13 +361,22 @@ class SuperModel(metaclass=BaseModel):
                 res = cls._meta.database.add_tag(cls,value)
                 if res == None:
                     return res
+                else:
+                    setattr(cls._meta, value.db_column, value)
         return res
     @classmethod
     def drop_tag(cls,name):
-        return cls._meta.database.drop_tag(cls,name)
+        res = cls._meta.database.drop_tag(cls,name)
+        if res != None and hasattr(cls._meta,name):
+            delattr(cls._meta,name)
+        return res
     @classmethod
     def change_tag_name(cls,name,newname):
-        return cls._meta.database.change_tag_name(cls,name,newname)
+        res = cls._meta.database.change_tag_name(cls,name,newname)
+        if res != None and hasattr(cls._meta,name):
+            tagObj = getattr(cls._meta,name)
+            tagObj.db_column=newname
+        return res
     @classmethod
     def supertable_exists(cls):
         # tables = ["%s.%s" % (cls._meta.database.database,x[3]) for x in cls._meta.database.get_tables()]
