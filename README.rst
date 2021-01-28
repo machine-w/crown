@@ -171,6 +171,7 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
 数据库中已有的数据库表，可以通过已知的表名建立对应的model类。
 
 .. code-block:: python
+
     nodeTable = Model.model_from_table('node_10',db) # node_10为数据表的表名
     res = nodeTable.select().one() # 从表名新建的类和静态建立的类，使用方法完全一致
 
@@ -415,6 +416,7 @@ join查询：
 数据库中已有的数据库超级表，可以通过已知的表名建立对应的supermodel类。
 
 .. code-block:: python
+
     sTable = Model.supermodel_from_table('rule_10',db) # rule_10为数据表的表名
     res = sTable.select().one() # 从表名新建的类和静态建立的类，使用方法完全一致
 
@@ -455,7 +457,7 @@ join查询：
 .. code-block:: python
 
     TableT = Meters.create_son_table('d3_insert',location='beijing',gid=3)
-    # 子表可以通过change_tag_value方法修改自己的标签值。
+    # 子表可以通过change_tag_value方法修改自己的标签值。
     TableT.change_tag_value(location='tianjin',gid = 6)
 
 
