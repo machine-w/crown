@@ -96,7 +96,7 @@ class Database(object):
 
     def execute_sql(self, sql, params=None, require_commit=True):
         cursor = self.get_cursor()
-        logger.debug((sql, params))
+        # logger.debug((sql, params))
         res = cursor.execute(sql, params or ())
         if res:
             if require_commit:

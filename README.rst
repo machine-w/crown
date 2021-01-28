@@ -166,6 +166,14 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
     Meter_dynamic.table_exists()
     Meter_dynamic.drop_table()
 
+从表名建立对应的model类：
+
+数据库中已有的数据库表，可以通过已知的表名建立对应的model类。
+
+.. code-block:: python
+    nodeTable = Model.model_from_table('node_10',db) # node_10为数据表的表名
+    res = nodeTable.select().one() # 从表名新建的类和静态建立的类，使用方法完全一致
+
 插入数据：
 
 .. code-block:: python
@@ -360,6 +368,7 @@ join查询：
 
 目前并支持多表join查询，需要多表查询的情况请使用raw_sql函数，执行原始sql语句。以后的版本会补充此功能。
 
+
 超级表定义：
 
 .. code-block:: python
@@ -401,6 +410,14 @@ join查询：
     Meter_dynamic.supertable_exists()
     Meter_dynamic.drop_table()
 
+从表名建立对应的supermodel类：
+
+数据库中已有的数据库超级表，可以通过已知的表名建立对应的supermodel类。
+
+.. code-block:: python
+    sTable = Model.supermodel_from_table('rule_10',db) # rule_10为数据表的表名
+    res = sTable.select().one() # 从表名新建的类和静态建立的类，使用方法完全一致
+
 从超级表建立子表：
 
 .. code-block:: python
@@ -410,3 +427,46 @@ join查询：
     SonTable_d3.table_exists() # SonTable_d3的使用方法和继承自Modle类的模型类一样。可以进行插入与查询操作
     # m = SonTable_d3(cur = 65.8,curInt=10,curDouble=1.1,desc='g1',ts = datetime.datetime.now())
     # m.save()
+
+新增标签：
+
+.. code-block:: python
+
+    # 使用add_tags方法，可以给超级表新建多个标签。每个参数可以是一个Field对象（必须指定db_column属性）
+    Meters.add_tags(IntegerField(db_column='add_tag_1'),IntegerField(db_column='add_tag_4'),BinaryField(max_length=30,db_column='add_tag_5'))
+
+删除标签：
+
+.. code-block:: python
+
+    # 使用drop_tag方法可以删除超级表的标签，参数名为标签名，一次只能删除一个标签
+    Meters.drop_tag('add_tag_2')
+
+修改标签名：
+
+.. code-block:: python
+
+    # 使用change_tag_name方法可以修改超级表的标签名，参数名为要修改的标签名，和新的标签名。（注意：此方法只修改对应超级表的标签名，并不修改类的属性名）
+    Meters.change_tag_name('add_tag_1','add_tag_2')
+
+
+修改子表标签值：
+
+.. code-block:: python
+
+    TableT = Meters.create_son_table('d3_insert',location='beijing',gid=3)
+    # 子表可以通过change_tag_value方法修改自己的标签值。
+    TableT.change_tag_value(location='tianjin',gid = 6)
+
+
+
+关于debug信息打印：
+
+如需查看crown调用tdengine引擎时执行的sql语句和返回的原始数据。只需要配置crown模块的logger记录器的日志输出级别为debug即可。
+
+.. code-block:: python
+
+    import logging
+    from crown import logger
+
+    logger.setLevel(logging.DEBUG) #配置logger对象，即可输出执行debug信息

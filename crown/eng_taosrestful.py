@@ -35,6 +35,7 @@ class Cursor(list):
         if param:
             param = map(lambda x: '"%s"' % x if isinstance(x,str) or isinstance(x,datetime) else x, param)
             sql = sql.format(*param)
+        logger.debug(("excute sql->",sql))
         res = self.conn.execute_sql(sql)
         if res:
             self.status=res.get('status')
@@ -44,7 +45,7 @@ class Cursor(list):
                 self.data = res.get('data')
                 # for d in res.get('data'):
                 #     self.data.append(Row(d,self.head))
-                logger.debug((res.get('data'), res.get('head')))
+                logger.debug(("result->",res.get('data'), res.get('head')))
                 super(Cursor, self).__init__(self.data)
                 return True
             else:
