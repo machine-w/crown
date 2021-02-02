@@ -45,8 +45,11 @@ class Meter1(Model):
 def test_create_drop_table():
     assert Meter1.create_table()
     print(db.get_tables())
+    print(db.curSql)
+    # print(Meter1.__dict__)
     assert Meter1.table_exists()
     assert Meter1.drop_table()
+    print(db.curSql)
     assert not Meter1.table_exists()
 def test_dynamic_create_table():
     Meter_dynamic= Model.dynamic_create_table('meterD',db,\
@@ -227,12 +230,15 @@ def test_Meter1_select_all(insertData):
         assert isinstance(res.curInt,int) or res.curInt is None
         assert isinstance(res.cur,float)
         assert res.ts<=datetime.datetime.now()
-    ress = Meter1.select(Meter1.cur,Meter1.desc).all()
+    # a = Meter1.fc('c2')
+    # print(a)
+    # print(Meter1.desc)
+    ress = Meter1.select(Meter1.desc,Meter1.fc('c2'),Meter1.f('cur')).all()
     assert len(ress) == 30
     for res in ress:
         assert res.desc == 'g2' or res.desc == 'g1' or res.desc == None
         assert res.curDouble == None
-        assert res.curInt == None
+        assert res.fc('c2') != None
         assert isinstance(res.cur,float)
         assert res.ts == None
 

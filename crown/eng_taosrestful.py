@@ -31,11 +31,13 @@ class Cursor(list):
         self.data = []
         self.err_code = None
         self.err_desc = ''
+        self.sqlStr =''
     def execute(self,sql,param=()):
         if param:
             param = map(lambda x: '"%s"' % x if isinstance(x,str) or isinstance(x,datetime) else x, param)
             sql = sql.format(*param)
         logger.debug(("excute sql->",sql))
+        self.sqlStr =sql
         res = self.conn.execute_sql(sql)
         if res:
             self.status=res.get('status')

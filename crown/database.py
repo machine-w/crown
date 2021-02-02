@@ -31,6 +31,7 @@ class Database(object):
         self.stables = {}
         self.field_overrides = dict_update(self.field_overrides, fields or {})
         self.op_overrides = dict_update(self.op_overrides, ops or {})
+        self.curSql =''
 
     def init(self, database, **connect_kwargs):
         self.deferred = database is None
@@ -98,6 +99,7 @@ class Database(object):
         cursor = self.get_cursor()
         # logger.debug((sql, params))
         res = cursor.execute(sql, params or ())
+        self.curSql =cursor.sqlStr
         if res:
             if require_commit:
                 self.commit()

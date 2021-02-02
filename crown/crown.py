@@ -263,6 +263,15 @@ class Model(metaclass=BaseModel):
                 return None
         else:
             return None
+    @classmethod
+    def fc(cls,col_name):
+        for name,field in cls.__dict__.items():
+            if isinstance(field,FieldDescriptor) and field.column_name == col_name:
+                    return field.field
+        return None
+    @classmethod
+    def f(cls,name):
+        return getattr(cls, name, None)
 class SuperModel(metaclass=BaseModel):
     def __init__(self, *args, **kwargs):
         self._data = self._meta.get_default_dict()
@@ -387,6 +396,15 @@ class SuperModel(metaclass=BaseModel):
         if cls._meta.order_by:
             query = query.order_by(*cls._meta.order_by)
         return query
+    @classmethod
+    def fc(cls,col_name):
+        for name,field in cls.__dict__.items():
+            if isinstance(field,FieldDescriptor) and field.column_name == col_name:
+                    return field.field
+        return None
+    @classmethod
+    def f(cls,name):
+        return getattr(cls, name, None)
     def get(self,expr):
         p1 = re.compile(r'^\((.*?)\)$', re.S)
         query_expr=type(self)._meta.database.get_compiler().parse_expr(expr)
@@ -401,6 +419,7 @@ class SuperModel(metaclass=BaseModel):
             return getattr(self,query_str) if hasattr(self,query_str) else None
         else:
             return None
+
 
 if __name__ == "__main__":
     pass

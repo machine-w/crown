@@ -98,6 +98,7 @@ class FieldDescriptor(object):
     def __init__(self, field):
         self.field = field
         self.att_name = self.field.name
+        self.column_name = self.field.db_column
 
     def __get__(self, instance, instance_type=None):
         if instance:

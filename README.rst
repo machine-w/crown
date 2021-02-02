@@ -70,6 +70,13 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
     # res.head: ['c1','c2']
     # res.rowcount: 4
 
+打印执行的sql语句:
+
+.. code-block:: python
+
+    Meter1.select().one()
+    print(db.curSql) #可以通过db对象的curSql属性获取当前执行的原始sql语句
+
 模型定义:
 
 .. code-block:: python
@@ -208,6 +215,10 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
     #select函数中可以选择要读取的字段
     res = Meter1.select(Meter1.cur,Meter1.desc).one()
     print(res.desc,res.curDouble,res.curInt,res.cur,res.ts)
+
+    #select函数中可以使用Model的类方法f()和fc()获取字符串形式的属性名与列名对应Field对象
+    res = Meter1.select(Meter1.f('cur'),Meter1.fc('c3'),Meter1.desc).one()
+    print(res.desc,res.curDouble,res.curInt,res.fc('c3'),res.f('cur'),res.ts)
 
 查询全部数据：
 
