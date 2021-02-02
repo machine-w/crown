@@ -44,10 +44,11 @@ class Cursor(list):
             if self.status == 'succ':
                 self.rowcount = res.get('rows')
                 self.head = res.get('head')
-                self.data = res.get('data')
                 if canDict:
                     for d in res.get('data'):
                         self.data.append(Row(d,self.head))
+                else:
+                    self.data = res.get('data')
                 logger.debug(("result->",res.get('data'), res.get('head')))
                 super(Cursor, self).__init__(self.data)
                 return True
