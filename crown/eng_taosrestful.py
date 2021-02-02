@@ -20,6 +20,14 @@ class Row(list):
                 return super(Row, self).__getitem__(self.head.index(key))
         except:
             return None
+    def get(self, key):
+        try:
+            if isinstance(key,int):
+                return super(Row, self).__getitem__(key)
+            else:
+                return super(Row, self).__getitem__(self.head.index(key))
+        except:
+            return None
         
 class Cursor(list):
     def __init__(self,conn):

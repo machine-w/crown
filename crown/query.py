@@ -697,6 +697,14 @@ class SelectQuery(Query):
         else:
             return False
 
+    def one_raw(self):
+        clone = self.paginate(1, 1)
+        res = clone.database.execute(clone)
+        if len(res) >0:
+            return res[0]
+        else:
+            return None
+    
     def one(self):
         clone = self.paginate(1, 1)
         res = clone.execute()
