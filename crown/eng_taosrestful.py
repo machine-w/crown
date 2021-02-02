@@ -32,7 +32,7 @@ class Cursor(list):
         self.err_code = None
         self.err_desc = ''
         self.sqlStr =''
-    def execute(self,sql,param=()):
+    def execute(self,sql,param=(),canDict=False):
         if param:
             param = map(lambda x: '"%s"' % x if isinstance(x,str) or isinstance(x,datetime) else x, param)
             sql = sql.format(*param)
@@ -45,8 +45,9 @@ class Cursor(list):
                 self.rowcount = res.get('rows')
                 self.head = res.get('head')
                 self.data = res.get('data')
-                # for d in res.get('data'):
-                #     self.data.append(Row(d,self.head))
+                if canDict:
+                    for d in res.get('data'):
+                        self.data.append(Row(d,self.head))
                 logger.debug(("result->",res.get('data'), res.get('head')))
                 super(Cursor, self).__init__(self.data)
                 return True

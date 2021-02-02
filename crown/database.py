@@ -15,7 +15,7 @@ class Database(object):
     sequences = False
     subquery_delete_same_table = True
 
-    def __init__(self, database, threadlocals=False, autocommit=True,
+    def __init__(self, database,canDict=False, threadlocals=False, autocommit=True,
                  fields=None, ops=None, **connect_kwargs):
         self.init(database, **connect_kwargs)
 
@@ -32,6 +32,7 @@ class Database(object):
         self.field_overrides = dict_update(self.field_overrides, fields or {})
         self.op_overrides = dict_update(self.op_overrides, ops or {})
         self.curSql =''
+        self.canDict = canDict
 
     def init(self, database, **connect_kwargs):
         self.deferred = database is None
@@ -98,7 +99,7 @@ class Database(object):
     def execute_sql(self, sql, params=None, require_commit=True):
         cursor = self.get_cursor()
         # logger.debug((sql, params))
-        res = cursor.execute(sql, params or ())
+        res = cursor.execute(sql, params or (),self.canDict)
         self.curSql =cursor.sqlStr
         if res:
             if require_commit:
