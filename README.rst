@@ -181,6 +181,18 @@ crown 是一个轻量级的针对时序数据（TSDB）TDengine的ORM库。
 
     nodeTable = Model.model_from_table('node_10',db) # node_10为数据表的表名
     res = nodeTable.select().one() # 从表名新建的类和静态建立的类，使用方法完全一致
+    
+    
+动态建立的或从数据库分析得到的model对象，可以直接使用列名作为属性名进行查询操作。
+
+.. code-block:: python
+
+
+    res = nodeTable.select(nodeTable.c1)where(nodeTable.c1 > 1).all() # 直接使用列名
+    res = nodeTable.select(nodeTable.c1)where(FloatField(db_column='c1') > 1).all() # 也可以使用field对象作为字段检索条件（多使用于列名为动态值的时候）
+    # 直接使用列名,查看结果
+    for item in res:
+        print(item.c1)
 
 插入数据：
 
