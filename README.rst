@@ -441,7 +441,7 @@ join查询：
 
 .. code-block:: python
 
-    sTable = Model.supermodel_from_table('rule_10',db) # rule_10为数据表的表名
+    sTable = SuperModel.supermodel_from_table('rule_10',db) # rule_10为数据表的表名
     res = sTable.select().one() # 从表名新建的类和静态建立的类，使用方法完全一致
 
 从超级表建立子表：
