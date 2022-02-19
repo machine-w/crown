@@ -4,13 +4,13 @@ from crown import *
 import datetime
 DATABASENAME = 'taos_tests'
 HOST = '121.36.56.117'
-PORT = 6041
-db = TdEngineDatabase(DATABASENAME,host=HOST)
+PORT = 8091
+db = TdEngineDatabase(DATABASENAME,host=HOST,port=PORT)
 
 import logging
 
 # 通过下面的方式进行简单配置输出方式与日志级别
-# logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 logger.setLevel(logging.DEBUG)
 def test_db_connect():
     db.connect()

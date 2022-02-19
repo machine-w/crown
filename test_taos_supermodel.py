@@ -8,9 +8,9 @@ import logging
 logger.setLevel(logging.DEBUG)
 DATABASENAME = 'taos_tests'
 HOST = '121.36.56.117'
-PORT = 6041
+PORT = 8091
 # 默认端口 6041，默认用户名：root,默认密码：taosdata
-db = TdEngineDatabase(DATABASENAME,host=HOST,user='root',passwd="taosdata")
+db = TdEngineDatabase(DATABASENAME,host=HOST,user='root',port=PORT,passwd="taosdata")
 
 # test all field 
 class AllFields(SuperModel):

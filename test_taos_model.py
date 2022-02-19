@@ -11,9 +11,9 @@ import logging
 logger.setLevel(logging.DEBUG)
 DATABASENAME = 'taos_test'
 HOST = '121.36.56.117'
-PORT = 6041
+PORT = 8091
 # 默认端口 6041，默认用户名：root,默认密码：taosdata
-db = TdEngineDatabase(DATABASENAME,host=HOST,passwd="taosdata")
+db = TdEngineDatabase(DATABASENAME,host=HOST,port=PORT,passwd="taosdata")
 class AllField(Model):
         name_float = FloatField(db_column='nf1')
         name_double = DoubleField()
