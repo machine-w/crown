@@ -213,7 +213,8 @@ class Model(metaclass=BaseModel):
         return cls._meta.database.describe_table(cls)
     @classmethod
     def table_exists(cls):
-        return cls._meta.db_table[cls._meta.db_table.index('.')+1:] in cls._meta.database.get_tables()
+        return cls._meta.db_table[cls._meta.db_table.index('.')+1:] in cls._meta.database.get_tables() or \
+                 cls._meta.db_table[cls._meta.db_table.index('.')+1:].lower() in cls._meta.database.get_tables()
         # return cls._meta.db_table in ["%s.%s" % (cls._meta.database.database,x[0]) for x in cls._meta.database.get_tables()]
     @classmethod
     def select(cls, *selection):
@@ -389,7 +390,8 @@ class SuperModel(metaclass=BaseModel):
     @classmethod
     def supertable_exists(cls):
         # tables = ["%s.%s" % (cls._meta.database.database,x[3]) for x in cls._meta.database.get_tables()]
-        return cls._meta.db_table[cls._meta.db_table.index('.')+1:] in cls._meta.database.get_supertables()
+        return cls._meta.db_table[cls._meta.db_table.index('.')+1:] in cls._meta.database.get_supertables() or \
+                cls._meta.db_table[cls._meta.db_table.index('.')+1:].lower() in cls._meta.database.get_supertables()
     @classmethod
     def select(cls, *selection):
         query = SelectQuery(cls, *selection)
