@@ -325,6 +325,13 @@ where查询条件：
             # order_by= ['-dd'] #也可以在元数据类中定义‘-dd’代表倒序‘dd’ 代表正序
             database = db
 
+去重 ：
+
+.. code-block:: python
+
+    #可以在select函数后链式调用distinct函数对返回的数据列进行去重复操作
+    res = Meter1.select().distinct().all()
+
 聚合函数：
 
 .. code-block:: python

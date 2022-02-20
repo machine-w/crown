@@ -144,6 +144,8 @@ class QueryCompiler(object):
         parts = ['SELECT']
         params = []
 
+        if query._distinct:
+            parts.append(query._distinct)
         selection = query._select
         select, s_params = self.parse_expr_list(selection, alias_map)
 
@@ -399,6 +401,7 @@ class SelectQuery(Query):
         self._interval= None
         self._interval_offset= None
         self._fill = None
+        self._distinct = None
         super(SelectQuery, self).__init__(model_class)
     
     def strToField(self,selection,all_selection):
@@ -424,6 +427,7 @@ class SelectQuery(Query):
             query._order_by = list(self._order_by)
         query._limit = self._limit
         query._offset = self._offset
+        query._distinct = self._distinct
         return query
 
     def _model_shorthand(self, args):
@@ -432,6 +436,10 @@ class SelectQuery(Query):
             if isinstance(arg, Leaf):
                 accum.append(arg)
         return accum
+    
+    @returns_clone
+    def distinct(self):
+        self._distinct = 'DISTINCT'
 
     @returns_clone
     def group_by(self, *args):
