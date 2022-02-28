@@ -47,13 +47,14 @@ class Cursor(list):
         logger.debug(("excute sql->",sql))
         self.sqlStr =sql
         res = self.conn.execute_sql(sql)
+        logger.debug(("raw result->",res))
         if res:
             self.status=res.get('status')
             if self.status == 'succ':
                 self.rowcount = res.get('rows')
                 self.head = res.get('head')
                 if canDict:
-                    for d in res.get('data'):
+                    for d in res.get('data') or []:
                         self.data.append(Row(d,self.head))
                 else:
                     self.data = res.get('data')
