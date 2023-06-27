@@ -4,8 +4,8 @@ crown
 crown is a simple and small ORM forTDengine(TSDB) 
 
 * python 3.0 up
-* tdengine 2.0.8 up
-
+* tdengine 3.0.0 up with version 0.3.0
+* tdengine 2.0.0 up with version 0.1.7
 
 Installing
 ----------------------
