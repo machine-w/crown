@@ -16,7 +16,7 @@ setup(
     install_requires=[
         'requests>=2.23.0'
     ],
-    version='0.1.7',
+    version='0.3.0',
     url='https://github.com/machine-w/crown',
     author='machine-w',
     author_email='steve2008.ma@gmail.com',
