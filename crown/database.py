@@ -1,7 +1,6 @@
 import threading
 from .common import *
 from .query import *
-from .eng_taosrestful import taos_resetful
 class Database(object):
     commit_select = False
     compiler_class = QueryCompiler
@@ -190,6 +189,11 @@ class Database(object):
     def raw_sql(self, sql, *params):
         return self.execute_sql(sql.replace("?", "{}"),params)
 class TdEngineDatabase(Database):
-    def _connect(self, database, **kwargs):
-        return taos_resetful.connect(database=database, **kwargs)
+    def _connect(self, database, version=3,**kwargs):
+        if version ==2:
+            from .eng_taosrestful import taos_resetful
+            return taos_resetful.connect(database=database, **kwargs)
+        elif version ==3:
+            from .eng_taosrestful3 import taos_resetful
+            return taos_resetful.connect(database=database, **kwargs)
 default_database = TdEngineDatabase('demo',host='localhost')

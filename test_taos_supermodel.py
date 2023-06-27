@@ -6,9 +6,9 @@ import logging
 # HOST = 'localhost'
 # db = TdEngineDatabase(DATABASENAME,host=HOST,user="root",passwd="taosdata")
 logger.setLevel(logging.DEBUG)
-DATABASENAME = 'taos_tests'
-HOST = '121.36.56.117'
-PORT = 8091
+DATABASENAME = 'taos_test'
+HOST = 'dev.tjulib.com.cn'
+PORT = 13011
 # 默认端口 6041，默认用户名：root,默认密码：taosdata
 db = TdEngineDatabase(DATABASENAME,host=HOST,user='root',port=PORT,passwd="taosdata")
 
@@ -31,7 +31,7 @@ class AllFields(SuperModel):
             db_table = 'all_field9'
             location = BinaryField(max_length=30)
             groupid = IntegerField(db_column='gid')
-AllField1 = AllFields.create_son_table('d3',location='beijing',groupid=3)
+# AllField1 = AllFields.create_son_table('d3',location='beijing',groupid=3)
 # class Meters(SuperModel):
 #         cur = FloatField(db_column='c1')
 #         curInt = IntegerField(db_column='c2')

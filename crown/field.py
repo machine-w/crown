@@ -252,15 +252,18 @@ def format_date_time(value, formats, post_process=None):
         except ValueError:
             pass
     return value
+class VarCharField(BinaryField):
+    db_field = 'varchar'
 class DateTimeField(Field):
     db_field = 'datetime'
 
     def field_attributes(self):
         return {
             'formats': [
-                '%Y-%m-%d %H:%M:%S.%f',
-                '%Y-%m-%d %H:%M:%S',
-                '%Y-%m-%d',
+                '%Y-%m-%dT%H:%M:%S.%fZ'
+                # '%Y-%m-%d %H:%M:%S.%f',
+                # '%Y-%m-%d %H:%M:%S',
+                # '%Y-%m-%d',
             ]
         }
 

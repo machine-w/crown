@@ -187,6 +187,8 @@ class Model(metaclass=BaseModel):
                         val = NCharField(column_name=f[0],max_length=f[2])
                     elif f[1] == 'BINARY':
                         val = BinaryField(column_name=f[0],max_length=f[2])
+                    elif f[1] == 'VARCHAR':
+                        val = VarCharField(column_name=f[0],max_length=f[2])
                     elif f[1] == 'BOOL':
                         val = BooleanField(column_name=f[0])
                     else:
@@ -317,6 +319,8 @@ class SuperModel(metaclass=BaseModel):
                     val = NCharField(column_name=f[0],max_length=f[2])
                 elif f[1] == 'BINARY':
                     val = BinaryField(column_name=f[0],max_length=f[2])
+                elif f[1] == 'VARCHAR':
+                    val = VarCharField(column_name=f[0],max_length=f[2])
                 elif f[1] == 'BOOL':
                     val = BooleanField(column_name=f[0])
                 else:

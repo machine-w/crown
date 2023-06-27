@@ -16,6 +16,7 @@ class QueryCompiler(object):
         'double': 'DOUBLE',
         'nchar': 'NCHAR',
         'binary': 'BINARY',
+        'varchar': 'VARCHAR',
         'datetime': 'TIMESTAMP',
         'bool': 'BOOL',
         'primary_key': 'TIMESTAMP',
@@ -49,7 +50,10 @@ class QueryCompiler(object):
         self._op_map = dict_update(self.op_map, op_overrides or {})
 
     def quote(self, s):
-        return ''.join((self.quote_char, s, self.quote_char))
+        # if TAOS_VERSION ==2:
+        #     return ''.join((self.quote_char, s, self.quote_char))
+        # elif TAOS_VERSION ==3:
+        return s
 
     def get_field(self, f):
         return self._field_map[f]
@@ -298,9 +302,9 @@ class QueryCompiler(object):
         parts.append(model_class._meta.db_table) #TODO：restful api 对引号的表名支持不好
         # parts.append(self.quote(model_class._meta.db_table))
         if isinstance(value,str):
-            parts.append('SET TAG "%s" = "%s"' % (name,value))
+            parts.append('SET TAG %s = "%s"' % (name,value))
         else:
-            parts.append('SET TAG "%s" = %s' % (name,value))
+            parts.append('SET TAG %s = %s' % (name,value))
         return ' '.join(parts)
     def add_tag(self,model_class,value):
         parts = ['ALTER TABLE ']
@@ -319,7 +323,7 @@ class QueryCompiler(object):
         parts = ['ALTER TABLE ']
         parts.append(model_class._meta.db_table) #TODO：restful api 对引号的表名支持不好
         # parts.append(self.quote(model_class._meta.db_table))
-        parts.append('CHANGE TAG %s %s' % (name,newname))
+        parts.append('RENAME TAG %s %s' % (name,newname))
         return ' '.join(parts)
     def drop_table(self, model_class, fail_silently=False, cascade=False):
         parts = ['DROP TABLE']
