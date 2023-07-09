@@ -245,7 +245,7 @@ class BinaryField(Field):
         value =  value or ''
         return value[:self.attributes['max_length']]
 def format_date_time(value, formats, post_process=None):
-    post_process = post_process or (lambda x: x)
+    post_process = post_process or (lambda x: x.astimezone(datetime.timezone.utc).replace(tzinfo=None))
     for fmt in formats:
         try:
             return post_process(datetime.datetime.strptime(value, fmt))
@@ -260,6 +260,7 @@ class DateTimeField(Field):
     def field_attributes(self):
         return {
             'formats': [
+                '%Y-%m-%dT%H:%M:%S.%f%z',
                 '%Y-%m-%dT%H:%M:%S.%fZ'
                 # '%Y-%m-%d %H:%M:%S.%f',
                 # '%Y-%m-%d %H:%M:%S',

@@ -98,8 +98,8 @@ class Conn():
         pass
 class TaosRestful():
     
-    def connect(self,database, host='localhost',port=6041,user='root',passwd='taosdata'):
-        conn = Conn(database,'http://%s:%s/%s' % (host,port,PATH),user,passwd)
+    def connect(self,database, host='localhost',port=6041,user='root',passwd='taosdata',timezone='Asia/Shanghai',db=''):
+        conn = Conn(database,'http://%s:%s/%s/%s?tz=%s' % (host,port,PATH,db,timezone),user,passwd)
         return conn
         
 taos_resetful = TaosRestful()
